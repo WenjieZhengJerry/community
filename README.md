@@ -12,3 +12,5 @@
 [OkHttp](https://square.github.io/okhttp/)
 ## 工具
 [spring web](https://spring.io/guides/gs/serving-web-content/)
+
+[lombok](https://projectlombok.org/setup/maven)
