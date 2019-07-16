@@ -1,5 +1,6 @@
 package cn.lngfun.community.community.service;
 
+import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
 import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
@@ -22,8 +23,28 @@ public class QuestionService {
     private UserMapper userMapper;
 
 
-    public List<QuestionDTO> list() {
-        List<Question> questions = questionMapper.list();
+    public PagingDTO list(Integer page, Integer size) {
+        PagingDTO pagingDTO = new PagingDTO();
+        Integer totalCount = questionMapper.count();
+        Integer totalPage;
+        //计算totalPage
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        //边界控制
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        pagingDTO.setPaging(totalPage, page);
+
+        Integer offset = size * (page - 1);
+        List<Question> questions = questionMapper.list(offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questions) {
@@ -34,6 +55,8 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        return questionDTOList;
+        pagingDTO.setQuestions(questionDTOList);
+
+        return pagingDTO;
     }
 }

@@ -51,7 +51,7 @@
             <h2><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 发现</h2>
             <hr>
 
-            <div class="media" th:each="question : ${questions}">
+            <div class="media" th:each="question : ${pagingDTO.questions}">
                 <div class="media-left">
                     <a href="#">
                         <img class="media-object" th:src="${question.user.avatarUrl}">
@@ -65,6 +65,34 @@
                 </div>
                 <hr>
             </div>
+
+            <nav aria-label="Page navigation" style="float: right;">
+                <ul class="pagination">
+                    <li th:if="${pagingDTO.showFirstPage}">
+                        <a href="/?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagingDTO.showPrevious}">
+                        <a th:href="@{/(page=${pagingDTO.currentPage - 1})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
+                        <a th:text="${page}" th:href="@{/(page=${page})}"></a>
+                    </li>
+                    <li th:if="${pagingDTO.showNext}">
+                        <a th:href="@{/(page=${pagingDTO.currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagingDTO.showEndPage}">
+                        <a th:href="@{/(page=${pagingDTO.totalPage})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <h3>热门话题</h3>

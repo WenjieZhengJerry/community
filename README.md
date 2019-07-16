@@ -10,6 +10,8 @@
 [Github 登录文档](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/)
 
 [OkHttp](https://square.github.io/okhttp/)
+
+[thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-attribute-values)
 ## 工具
 [spring web](https://spring.io/guides/gs/serving-web-content/)
 
