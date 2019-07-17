@@ -41,7 +41,7 @@ public class QuestionService {
         if (page > totalPage) {
             page = totalPage;
         }
-        pagingDTO.setPaging(totalPage, page);
+        pagingDTO.setPaging(totalPage, page);//装填页面元素
 
         Integer offset = size * (page - 1);
         List<Question> questions = questionMapper.list(offset, size);
@@ -55,8 +55,46 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pagingDTO.setQuestions(questionDTOList);
+        pagingDTO.setQuestions(questionDTOList);//装填页面数据
 
         return pagingDTO;
     }
+
+    public PagingDTO list(Integer userId, Integer page, Integer size) {
+        PagingDTO pagingDTO = new PagingDTO();
+        Integer totalCount = questionMapper.countByUserId(userId);
+        Integer totalPage;
+        //计算totalPage
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+
+        //边界控制
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        pagingDTO.setPaging(totalPage, page);//装填页面元素
+
+        Integer offset = size * (page - 1);
+        List<Question> questions = questionMapper.listByUserId(userId, offset, size);
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+        for (Question question : questions) {
+            User user = userMapper.findById(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question, questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+
+        pagingDTO.setQuestions(questionDTOList);//装填页面数据
+
+        return pagingDTO;
+    }
+
 }

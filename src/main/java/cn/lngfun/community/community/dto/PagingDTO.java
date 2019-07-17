@@ -18,8 +18,7 @@ public class PagingDTO {
 
     public void setPaging(Integer totalPage, Integer page) {
         this.totalPage = totalPage;
-
-        currentPage = page;
+        this.currentPage = page;
         pages.add(page);
         for (int i = 1; i <= 3; i++) {
             if (page - i > 0) {
