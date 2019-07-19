@@ -3,6 +3,10 @@
 ## 资料
 [spring 文档](https://spring.io/guides)
 
+[Spring MVC](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/web.html#mvc-handlermapping-interceptor)
+
+[spring boot 文档](https://docs.spring.io/spring-boot/docs/2.0.0.RC1/reference/htmlsingle/#boot-features-embedded-database-support)
+
 [Bootstrap 文档](https://v3.bootcss.com/components)
 
 [elasticsearch网站](https://elasticsearch.cn)
@@ -12,8 +16,6 @@
 [OkHttp](https://square.github.io/okhttp/)
 
 [thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html#setting-attribute-values)
-
-[Spring MVC](https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/web.html#mvc-handlermapping-interceptor)
 
 
 ## 工具
