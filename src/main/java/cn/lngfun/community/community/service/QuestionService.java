@@ -62,7 +62,7 @@ public class QuestionService {
         return pagingDTO;
     }
 
-    public PagingDTO list(Integer userId, Integer page, Integer size) {
+    public PagingDTO list(Long userId, Integer page, Integer size) {
         PagingDTO pagingDTO = new PagingDTO();
         Integer totalCount = questionMapper.countByUserId(userId);
         Integer totalPage;
@@ -99,7 +99,7 @@ public class QuestionService {
         return pagingDTO;
     }
 
-    public QuestionDTO findById(Integer id) {
+    public QuestionDTO findById(Long id) {
         Question question = questionMapper.findById(id);
         if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
@@ -128,7 +128,7 @@ public class QuestionService {
         }
     }
 
-    public void incView(Integer id) {
+    public void incView(Long id) {
         questionMapper.incView(id);
     }
 }
