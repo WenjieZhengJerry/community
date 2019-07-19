@@ -5,6 +5,7 @@ import cn.lngfun.community.community.dto.GithubUser;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.GithubProvider;
+import cn.lngfun.community.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,7 @@ public class AuthorizeController {
     private String redirectUri;
 
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     /**
      * 调用Github登录的API，整个过程调用3个接口，包括获取code、获取access_token、获取user信息
@@ -66,11 +67,9 @@ public class AuthorizeController {
             user.setToken(token);
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setName(githubUser.getName());
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
             user.setBio(githubUser.getBio());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            userMapper.insert(user);
+            userService.createOrUpdate(user);
 
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
@@ -81,9 +80,12 @@ public class AuthorizeController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        request.removeAttribute("token");
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
 
-        return "index";
+        return "redirect:/";
     }
 }
