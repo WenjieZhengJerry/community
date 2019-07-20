@@ -3,6 +3,8 @@ package cn.lngfun.community.community.mapper;
 import cn.lngfun.community.community.model.User;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -20,4 +22,7 @@ public interface UserMapper {
 
     @Update("update user set name = #{name}, token = #{token}, avatar_url = #{avatarUrl}, gmt_modified = #{gmtModified} where id = #{id}")
     void update(User user);
+
+    @Select("select * from user where id in (#{usersIdStr})")
+    List<User> findByIds(@Param("usersIdStr") String usersIdStr);
 }
