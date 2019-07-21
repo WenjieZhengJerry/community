@@ -1,10 +1,7 @@
 package cn.lngfun.community.community.mapper;
 
 import cn.lngfun.community.community.model.Comment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -19,4 +16,7 @@ public interface CommentMapper {
 
     @Select("select * from comment where parent_id = #{parentId} and type = #{type} order by gmt_create DESC")
     List<Comment> findByParentId(@Param(value = "parentId") Long parentId, @Param(value = "type") Integer type);
+
+    @Update("update comment set comment_count = comment_count + 1 where id = #{id}")
+    void incCommentCount(@Param(value = "id") Long id);
 }

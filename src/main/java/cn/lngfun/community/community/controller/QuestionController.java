@@ -2,6 +2,7 @@ package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.dto.CommentDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
+import cn.lngfun.community.community.enums.CommentTypeEnum;
 import cn.lngfun.community.community.service.CommentService;
 import cn.lngfun.community.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,13 @@ public class QuestionController {
     @GetMapping("/question/{id}")
     public String question (@PathVariable(name = "id") Long id, Model model) {
         QuestionDTO questionDTO = questionService.findById(id);
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
         //浏览量加1
         questionService.incView(id);
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
+        model.addAttribute("relatedQuestions", relatedQuestions);
 
         return "question";
     }

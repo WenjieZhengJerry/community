@@ -47,6 +47,13 @@ body {
     margin: 10px 0;
 }
 
+.sub-comments {
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #eee;
+    padding-top: 15px;
+}
+
 .comment-sp {
     margin-top: 0;
 }
@@ -56,16 +63,34 @@ body {
     margin-top: 5px;
 }
 
-.menu .icon {
-    margin-right: 6px;
+.menu .comment-icon {
+    margin-right: 10px;
     font-size: 15px;
     cursor: pointer;
 }
 
-.menu .icon:hover {
+.menu .comment-icon:hover {
+    color: #499ef3;
+}
+
+.menu .active {
     color: #499ef3;
 }
 
 .question-tilte {
     margin-top: 25px;
+}
+
+.question-tag {
+    margin-right: 5px;
+}
+
+.question-related {
+    list-style: none;
+    padding-left: 0;
+    line-height: 25px;
+}
+
+.comment-div {
+    margin-top: 20px;
 }

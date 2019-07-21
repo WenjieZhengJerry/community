@@ -8,12 +8,15 @@ import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.Question;
 import cn.lngfun.community.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -130,5 +133,23 @@ public class QuestionService {
 
     public void incView(Long id) {
         questionMapper.incView(id);
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO questionQueryDTO) {
+        if (StringUtils.isBlank(questionQueryDTO.getTag())) {
+            return new ArrayList<>();
+        }
+
+        String[] tags = StringUtils.split(questionQueryDTO.getTag(), ",");
+        String regexpTags = Arrays.stream(tags).collect(Collectors.joining("|"));
+
+        List<Question> questions = questionMapper.selectRelated(questionQueryDTO.getId(), regexpTags);
+        List<QuestionDTO> questionDTOList = questions.stream().map(q -> {
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO);
+            return questionDTO;
+        }).collect(Collectors.toList());
+
+        return questionDTOList;
     }
 }

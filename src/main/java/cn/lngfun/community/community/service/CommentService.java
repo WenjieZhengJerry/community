@@ -50,6 +50,8 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+            //评论数加一
+            commentMapper.incCommentCount(dbComment.getId());
         } else {
             //回复问题
             Question question = questionMapper.findById(comment.getParentId());
@@ -62,11 +64,11 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> listByQuestionId(Long id) {
-        List<Comment> comments = commentMapper.findByParentId(id, CommentTypeEnum.QUESTION.getType());
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
+        List<Comment> comments = commentMapper.findByParentId(id, type.getType());
 
         if (comments.size() == 0) {
-            return null;
+            return new ArrayList<>();
         }
         //获取去重评论人
         Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
