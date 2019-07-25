@@ -1,7 +1,9 @@
 package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.dto.PagingDTO;
+import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
+import cn.lngfun.community.community.service.NotificationService;
 import cn.lngfun.community.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,9 @@ public class ProfileController {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @GetMapping("/profile/{action}")
     public String profile(@PathVariable(name = "action") String action, Model model, HttpServletRequest request,
                           @RequestParam(name = "page", defaultValue = "1") Integer page,
@@ -32,13 +37,20 @@ public class ProfileController {
         if("questions".equals(action)) {
             model.addAttribute("section", "questions");
             model.addAttribute("sectionName", "我的问题");
+
+            PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
+            Integer unreadCount = notificationService.getUnreadCount(user.getId());
+            model.addAttribute("pagingDTO", pagingDTO);
+            model.addAttribute("unreadCount", unreadCount);
         }else if("replies".equals(action)) {
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
-        }
 
-        PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
-        model.addAttribute("pagingDTO", pagingDTO);
+            PagingDTO pagingDTO = notificationService.list(user.getId(), page, size);
+            Integer unreadCount = notificationService.getUnreadCount(user.getId());
+            model.addAttribute("pagingDTO", pagingDTO);
+            model.addAttribute("unreadCount", unreadCount);
+        }
 
         return "profile";
     }

@@ -83,6 +83,8 @@ body {
 
 .question-tag {
     margin-right: 5px;
+    cursor: pointer;
+    white-space: normal;
 }
 
 .question-related {
@@ -93,4 +95,9 @@ body {
 
 .comment-div {
     margin-top: 20px;
+}
+
+.publish-tag-table {
+    display: none;
+    margin-top: 10px;
 }

@@ -29,7 +29,7 @@ public class QuestionService {
 
 
     public PagingDTO list(Integer page, Integer size) {
-        PagingDTO pagingDTO = new PagingDTO();
+        PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = questionMapper.count();
         Integer totalPage;
         //计算totalPage
@@ -60,13 +60,13 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pagingDTO.setQuestions(questionDTOList);//装填页面数据
+        pagingDTO.setData(questionDTOList);//装填页面数据
 
         return pagingDTO;
     }
 
     public PagingDTO list(Long userId, Integer page, Integer size) {
-        PagingDTO pagingDTO = new PagingDTO();
+        PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = questionMapper.countByUserId(userId);
         Integer totalPage;
         //计算totalPage
@@ -97,7 +97,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pagingDTO.setQuestions(questionDTOList);//装填页面数据
+        pagingDTO.setData(questionDTOList);//装填页面数据
 
         return pagingDTO;
     }

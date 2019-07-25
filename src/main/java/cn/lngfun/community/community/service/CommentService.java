@@ -2,12 +2,16 @@ package cn.lngfun.community.community.service;
 
 import cn.lngfun.community.community.dto.CommentDTO;
 import cn.lngfun.community.community.enums.CommentTypeEnum;
+import cn.lngfun.community.community.enums.NotificationStatusEnum;
+import cn.lngfun.community.community.enums.NotificationTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.mapper.CommentMapper;
+import cn.lngfun.community.community.mapper.NotificationMapper;
 import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.Comment;
+import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.Question;
 import cn.lngfun.community.community.model.User;
 import org.springframework.beans.BeanUtils;
@@ -33,8 +37,11 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private NotificationMapper notificationMapper;
+
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
@@ -49,9 +56,17 @@ public class CommentService {
             if (dbComment == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
+            //查找到对应的问题
+            Question question = questionMapper.findById(dbComment.getParentId());
+            if (question == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+
             commentMapper.insert(comment);
             //评论数加一
             commentMapper.incCommentCount(dbComment.getId());
+            //添加通知
+            createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
         } else {
             //回复问题
             Question question = questionMapper.findById(comment.getParentId());
@@ -61,7 +76,22 @@ public class CommentService {
             commentMapper.insert(comment);
             //评论数加一
             questionMapper.incCommentCount(question.getId());
+            //添加通知
+            createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
         }
+    }
+
+    public void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setNotifier(comment.getCommentator());
+        notification.setOuterId(outerId);
+        notification.setReceiver(receiver);
+        notification.setType(notificationType.getType());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setNotifierName(notifierName);
+        notification.setOuterTitle(outerTitle);
+        notificationMapper.insert(notification);
     }
 
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
