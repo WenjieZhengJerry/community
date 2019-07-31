@@ -39,7 +39,11 @@
                             height: 350,
                             path: "/js/lib/",
                             delay: 0,
-                            placeholder: "问题补充（必填，请参照右侧提示）"
+                            watch: false,
+                            placeholder: "问题补充（必填，请参照右侧提示）",
+                            imageUpload: true,
+                            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL: "/file/upload",
                         });
                     });
                 </script>
