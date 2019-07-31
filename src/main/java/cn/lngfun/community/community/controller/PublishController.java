@@ -2,6 +2,8 @@ package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.cache.TagCache;
 import cn.lngfun.community.community.dto.QuestionDTO;
+import cn.lngfun.community.community.exception.CustomizeErrorCode;
+import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.model.Question;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.service.QuestionService;
@@ -23,8 +25,20 @@ public class PublishController {
     private QuestionService questionService;
 
     @GetMapping("/publish/{id}")
-    public String edit(@PathVariable(name = "id") Long id, Model model) {
+    public String edit(@PathVariable(name = "id") Long id, Model model, HttpServletRequest request) {
         QuestionDTO question = questionService.findById(id);
+
+        User user = (User) request.getSession().getAttribute("user");
+        //判断登录状态
+        if (user == null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
+
+        //判断非法id，只有基础类型能用 == 比较，封装类型统一用equals
+        if (!user.getId().equals(question.getCreator())) {
+            throw new CustomizeException(CustomizeErrorCode.INVALID_QUESTION_ID);
+        }
+
         model.addAttribute("title", question.getTitle());
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());

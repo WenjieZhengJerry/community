@@ -39,17 +39,13 @@ public class ProfileController {
             model.addAttribute("sectionName", "我的问题");
 
             PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
-            Integer unreadCount = notificationService.getUnreadCount(user.getId());
             model.addAttribute("pagingDTO", pagingDTO);
-            model.addAttribute("unreadCount", unreadCount);
         }else if("replies".equals(action)) {
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
 
             PagingDTO pagingDTO = notificationService.list(user.getId(), page, size);
-            Integer unreadCount = notificationService.getUnreadCount(user.getId());
             model.addAttribute("pagingDTO", pagingDTO);
-            model.addAttribute("unreadCount", unreadCount);
         }
 
         return "profile";

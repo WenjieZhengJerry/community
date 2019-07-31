@@ -2,6 +2,7 @@ package cn.lngfun.community.community.interceptor;
 
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
+import cn.lngfun.community.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,6 +18,9 @@ public class SessionInterceptor implements HandlerInterceptor {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private NotificationService notificationService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //判断登录状态
@@ -27,6 +31,9 @@ public class SessionInterceptor implements HandlerInterceptor {
                     User user = userMapper.findByToken(cookie.getValue());
                     if(user != null) {
                         request.getSession().setAttribute("user", user);
+                        //设置未读信息数量
+                        Integer unreadCount = notificationService.getUnreadCount(user.getId());
+                        request.getSession().setAttribute("unreadCount", unreadCount);
                     }
                     break;
                 }
