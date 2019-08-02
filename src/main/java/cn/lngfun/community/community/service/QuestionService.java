@@ -28,27 +28,10 @@ public class QuestionService {
     private UserMapper userMapper;
 
 
-    public PagingDTO list(Integer page, Integer size) {
-        PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
-        Integer totalCount = questionMapper.count();
-        Integer totalPage;
-        //计算totalPage
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-
-        //边界控制
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
-        pagingDTO.setPaging(totalPage, page);//装填页面元素
-
-        Integer offset = size * (page - 1);
+    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size) {
+        //计算从第几页开始
+        Integer offset = pagingDTO.calculateOffset(totalCount, page, size);
+        //获取这一页的所有问题
         List<Question> questions = questionMapper.list(offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
@@ -60,44 +43,36 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        pagingDTO.setData(questionDTOList);//装填页面数据
+        return questionDTOList;
+    }
+
+    /**
+     * 列出所有问题列表
+     * @param page
+     * @param size
+     * @return
+     */
+    public PagingDTO list(Integer page, Integer size) {
+        PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
+        Integer totalCount = questionMapper.count();
+
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size));//装填页面数据
 
         return pagingDTO;
     }
 
+    /**
+     * 通过userId列出问题列表
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
     public PagingDTO list(Long userId, Integer page, Integer size) {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = questionMapper.countByUserId(userId);
-        Integer totalPage;
-        //计算totalPage
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
 
-        //边界控制
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
-        pagingDTO.setPaging(totalPage, page);//装填页面元素
-
-        Integer offset = size * (page - 1);
-        List<Question> questions = questionMapper.listByUserId(userId, offset, size);
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-
-        for (Question question : questions) {
-            User user = userMapper.findById(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTOList.add(questionDTO);
-        }
-
-        pagingDTO.setData(questionDTOList);//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size));//装填页面数据
 
         return pagingDTO;
     }
@@ -151,5 +126,9 @@ public class QuestionService {
         }).collect(Collectors.toList());
 
         return questionDTOList;
+    }
+
+    public List<Question> selectHotIssue() {
+        return questionMapper.selectHotIssue();
     }
 }

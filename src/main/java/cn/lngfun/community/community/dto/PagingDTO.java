@@ -55,4 +55,20 @@ public class PagingDTO<T> {
             showEndPage = true;
         }
     }
+
+    public Integer calculateOffset(Integer totalCount, Integer page, Integer size) {
+        //计算totalPage
+        Integer totalPage = totalCount % size == 0 ? totalCount / size : totalCount / size + 1;
+
+        //边界控制
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPage) {
+            page = totalPage;
+        }
+        this.setPaging(totalPage, page);//装填页面元素
+
+        return size * (page - 1);
+    }
 }

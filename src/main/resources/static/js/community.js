@@ -92,6 +92,9 @@ function collapseComments(e) {
                     }).append($("<h5/>", {
                         "class": "media-heading",
                         "html": comment.user.name
+                    })).append($("<span/>", {
+                        "class": "pull-right",
+                        "html": "<a href='javascript:void(0)'>回复</a>"
                     })).append($("<div/>", {
                         "html": comment.content
                     })).append($("<div/>", {

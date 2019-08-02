@@ -37,4 +37,7 @@ public interface QuestionMapper {
 
     @Select("select * from question where id != #{id} and tag regexp #{tag} order by view_count DESC limit 0, 10")
     List<Question> selectRelated(@Param(value = "id") Long id, @Param(value = "tag") String tag);
+
+    @Select("select * from question order by view_count DESC, comment_count DESC limit 0, 10")
+    List<Question> selectHotIssue();
 }

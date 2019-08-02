@@ -9,6 +9,10 @@ body {
     margin-right: 200px;
 }
 
+.index-div {
+    margin-top: 25px;
+}
+
 .btn-publish {
     margin-bottom: 20px;
     float: right;

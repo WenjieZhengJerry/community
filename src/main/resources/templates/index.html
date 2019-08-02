@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="/css/community.css"/>
-    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css"/>
 
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
@@ -25,7 +24,8 @@
 <div th:insert="navigation :: nav"></div>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <!--左边信息块-->
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 index-div">
             <h2><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 发现</h2>
             <hr>
 
@@ -74,9 +74,21 @@
                 </ul>
             </nav>
         </div>
+        <!--右边信息块-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h3>热门话题</h3>
-
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-div">
+                <h4>热门话题</h4>
+                <ul class="question-related">
+                    <li th:each="hotIssue : ${hotIssues}">
+                        <a th:href="@{'/question/'+${hotIssue.id}}" th:text="${hotIssue.title}"></a>
+                    </li>
+                </ul>
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4>广告位招租</h4>
+                <img src="/images/upload/my-wechat.jpg" class="img-thumbnail">
+            </div>
         </div>
     </div>
 </div>

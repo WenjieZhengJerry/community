@@ -2,6 +2,8 @@ package cn.lngfun.community.community.provider;
 
 import cn.lngfun.community.community.dto.AccessTokenDTO;
 import cn.lngfun.community.community.dto.GithubUser;
+import cn.lngfun.community.community.exception.CustomizeErrorCode;
+import cn.lngfun.community.community.exception.CustomizeException;
 import com.alibaba.fastjson.JSON;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
@@ -26,8 +28,8 @@ public class GithubProvider {
             return token;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomizeException(CustomizeErrorCode.NETWORK_CONNECT_FAIL);
         }
-        return null;
     }
 
     public GithubUser getUser(String accessToken) {
@@ -43,7 +45,7 @@ public class GithubProvider {
             return githubUser;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CustomizeException(CustomizeErrorCode.NETWORK_CONNECT_FAIL);
         }
-        return null;
     }
 }
