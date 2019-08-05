@@ -105,3 +105,8 @@ body {
     display: none;
     margin-top: 10px;
 }
+
+.footer {
+    padding: 25px 30%;
+    color: #666;
+}

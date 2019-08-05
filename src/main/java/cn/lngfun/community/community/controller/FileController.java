@@ -1,9 +1,7 @@
 package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.dto.FileDTO;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,7 +57,7 @@ public class FileController {
         //服务器端保存的文件对象
         File serverFile = new File(path + File.separator + filename);
 
-        if(!serverFile.exists()) {
+        if (!serverFile.exists()) {
             //先得到文件的上级目录，并创建上级目录，在创建文件
             serverFile.getParentFile().mkdirs();
             try {

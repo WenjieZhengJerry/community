@@ -51,6 +51,12 @@
                         </span>
                     </div>
                     <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <!--删除-->
+                    <a href="" class="community-menu pull-right"
+                       th:if="${session.user != null && session.user.id == question.creator}">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        删除
+                    </a>
                     <!--编辑-->
                     <a th:href="@{'/publish/'+${question.id}}" class="community-menu pull-right"
                        th:if="${session.user != null && session.user.id == question.creator}">
@@ -117,16 +123,12 @@
                     <div class="media">
                         <div class="media-left">
                             <a href="#">
-                                <img class="media-object img-rounded" th:src="${session.user.avatarUrl}"
-                                     th:if="${session.user != null}">
-                                <span class="media-object glyphicon glyphicon-user"
-                                      th:if="${session.user == null}"></span>
+                                <img class="media-object img-rounded" th:src="${session.user != null ? session.user.avatarUrl : '/images/upload/default-icon.png'}">
                             </a>
                         </div>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                <span th:text="${session.user.name}" th:if="${session.user != null}"></span>
-                                <span th:if="${session.user == null}" th:text="匿名用户"></span>
+                                <span th:text="${session.user != null ? session.user.name : '匿名用户'}"></span>
                             </h5>
                         </div>
                     </div>
@@ -170,5 +172,6 @@
         </div>
     </div>
 </div>
+<div th:insert="footer :: foot"></div>
 </body>
 </html>

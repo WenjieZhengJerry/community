@@ -106,10 +106,6 @@ public class QuestionService {
         }
     }
 
-    public void incView(Long id) {
-        questionMapper.incView(id);
-    }
-
     public List<QuestionDTO> selectRelated(QuestionDTO questionQueryDTO) {
         if (StringUtils.isBlank(questionQueryDTO.getTag())) {
             return new ArrayList<>();
@@ -126,6 +122,10 @@ public class QuestionService {
         }).collect(Collectors.toList());
 
         return questionDTOList;
+    }
+
+    public void incView(Long id) {
+        questionMapper.incView(id);
     }
 
     public List<Question> selectHotIssue() {
