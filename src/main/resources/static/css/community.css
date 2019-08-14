@@ -110,3 +110,7 @@ body {
     padding: 25px 30%;
     color: #666;
 }
+
+.badge {
+    background-color: #d9534f;
+}

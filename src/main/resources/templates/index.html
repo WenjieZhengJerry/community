@@ -45,29 +45,29 @@
                 </div>
                 <hr>
             </div>
-
+            <!--分页栏-->
             <nav aria-label="Page navigation" style="float: right;">
                 <ul class="pagination">
                     <li th:if="${pagingDTO.showFirstPage}">
-                        <a href="/?page=1" aria-label="Previous">
+                        <a href="@{/(page=1,search=${search})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;&lt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showPrevious}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage - 1})}" aria-label="Previous">
+                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
                     <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
-                        <a th:text="${page}" th:href="@{/(page=${page})}"></a>
+                        <a th:text="${page}" th:href="@{/(page=${page},search=${search})}"></a>
                     </li>
                     <li th:if="${pagingDTO.showNext}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage + 1})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search})}" aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showEndPage}">
-                        <a th:href="@{/(page=${pagingDTO.totalPage})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.totalPage},search=${search})}" aria-label="Next">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>

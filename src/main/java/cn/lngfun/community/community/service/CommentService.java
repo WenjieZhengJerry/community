@@ -107,20 +107,14 @@ public class CommentService {
         }
         //获取去重评论人
         Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
-        List<Long> usersId = new ArrayList<>();
-        usersId.addAll(commentators);
-
-        //将id转换成字符串以便查询
-        String usersIdStr = "";
-        for (Long userId : usersId) {
-            usersIdStr += userId + ",";
-        }
-
-        //去掉最后的,号
-        usersIdStr = usersIdStr.substring(0, usersIdStr.length() - 1);
 
         //获取评论人信息并转换成 Map
-        List<User> users = userMapper.findByIds(usersIdStr);
+        List<User> users = new ArrayList<>();
+        for (Long commentator : commentators) {
+            User user = userMapper.findById(commentator);
+            users.add(user);
+        }
+
         Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
 
         //转换comment为commentDTO

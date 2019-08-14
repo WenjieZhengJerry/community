@@ -28,11 +28,17 @@ public class QuestionService {
     private UserMapper userMapper;
 
 
-    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size) {
+    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search) {
         //计算从第几页开始
         Integer offset = pagingDTO.calculateOffset(totalCount, page, size);
         //获取这一页的所有问题
-        List<Question> questions = questionMapper.list(offset, size);
+        List<Question> questions;
+        if (search == null || "".equals(search)) {//无搜索条件
+            questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
+        } else {
+            questions = questionMapper.listBySearch(offset, size, search);
+        }
+
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questions) {
@@ -52,11 +58,17 @@ public class QuestionService {
      * @param size
      * @return
      */
-    public PagingDTO list(Integer page, Integer size) {
+    public PagingDTO list(Integer page, Integer size, String search) {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
-        Integer totalCount = questionMapper.count();
+        //计算问题总数
+        Integer totalCount;
+        if (search == null || "".equals(search)) {//无搜索条件
+            totalCount = questionMapper.count();
+        } else {
+            totalCount = questionMapper.countBySearch(search);
+        }
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, null, search));//装填页面数据
 
         return pagingDTO;
     }
@@ -72,7 +84,7 @@ public class QuestionService {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = questionMapper.countByUserId(userId);
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, userId, null));//装填页面数据
 
         return pagingDTO;
     }
