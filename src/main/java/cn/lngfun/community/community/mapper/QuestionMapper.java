@@ -40,10 +40,17 @@ public interface QuestionMapper {
     //增加问题的回复量
     @Update("update question set comment_count = comment_count + 1 where id = #{id}")
     void incCommentCount(@Param(value = "id") Long id);
+    //减少问题的回复量
+    @Update("update question set comment_count = comment_count - 1 where id = #{id}")
+    void decCommentCount(@Param(value = "id") Long id);
     //通过标签查找相关问题，只列出10个
     @Select("select * from question where id != #{id} and tag regexp #{tag} order by view_count DESC limit 0, 10")
     List<Question> selectRelated(@Param(value = "id") Long id, @Param(value = "tag") String tag);
     //列出浏览量和回复量的前十个问题
     @Select("select * from question order by view_count DESC, comment_count DESC limit 0, 10")
     List<Question> selectHotIssue();
+    //通过问题id删除问题
+    @Delete("delete from question where id = #{questionId}")
+    void deleteQuestion(@Param(value = "questionId") Long questionId);
+
 }

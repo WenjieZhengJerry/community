@@ -4,6 +4,7 @@ import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
+import cn.lngfun.community.community.mapper.CommentMapper;
 import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.Question;
@@ -26,6 +27,9 @@ public class QuestionService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CommentService commentService;
 
 
     private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search) {
@@ -142,5 +146,21 @@ public class QuestionService {
 
     public List<Question> selectHotIssue() {
         return questionMapper.selectHotIssue();
+    }
+
+    public Integer deleteQuestion(Long questionId, Long userId) {
+        Question question = questionMapper.findById(questionId);
+
+        if (question == null) {
+            //问题没有找到
+            return CustomizeErrorCode.QUESTION_NOT_FOUND.getCode();
+        } else if (!userId.equals(question.getCreator())) {
+            //判断该问题的发布者是否和当前用户一致，防止有人通过问题id直接删除别人的问题
+            return CustomizeErrorCode.DELETE_QUESTION_FAIL.getCode();
+        } else {
+            questionMapper.deleteQuestion(questionId);
+            commentService.deleteCommentByParentId(questionId);
+            return CustomizeErrorCode.SUCCESS.getCode();
+        }
     }
 }

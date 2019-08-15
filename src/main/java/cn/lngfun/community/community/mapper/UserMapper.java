@@ -22,7 +22,4 @@ public interface UserMapper {
     //更新用户信息
     @Update("update user set name = #{name}, token = #{token}, avatar_url = #{avatarUrl}, gmt_modified = #{gmtModified} where id = #{id}")
     void update(User user);
-    //通过id查找一组用户
-    @Select("select * from user where id in (#{usersIdStr})")
-    List<User> findByIds(@Param("usersIdStr") String usersIdStr);
 }

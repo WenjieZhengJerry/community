@@ -13,7 +13,7 @@ function post() {
  */
 function comment(e) {
     var commentId = e.getAttribute("data-id");
-    var content = $("#input-"+commentId).val();
+    var content = $("#input-" + commentId).val();
     comment2target(commentId, 2, content);
 }
 
@@ -128,8 +128,8 @@ function selectTag(e) {
     var previous = $("#tag").val();
     var value = e.getAttribute("data-tag");
 
-    if(previous.indexOf(value) == -1) {
-        if(previous) {
+    if (previous.indexOf(value) == -1) {
+        if (previous) {
             $("#tag").val(previous + ',' + value);
         } else {
             $("#tag").val(value);
@@ -139,4 +139,22 @@ function selectTag(e) {
 
 function showSelectTag() {
     $("#select-tag").show();
+}
+
+function deleteQuestion(id) {
+    if (confirm("删除问题无法复原，是否删除？")) {
+        $.ajax({
+            type: "POST",
+            url: "/deleteQuestion?id=" + id,
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+                if (response.code == 200) {
+                    window.location.reload();
+                } else {
+                    response.code == 2012 ? alert(response.message) : alert("删除失败");
+                }
+            }
+        });
+    }
 }

@@ -127,4 +127,20 @@ public class CommentService {
 
         return commentDTOList;
     }
+
+    public void deleteCommentByParentId(Long questionId) {
+        //找出这个问题的所有评论
+        List<Comment> commentsFromQuestion = commentMapper.findByParentId(questionId, CommentTypeEnum.QUESTION.getType());
+        //找出这些评论的子评论并删除
+        for (Comment parentComment : commentsFromQuestion) {
+            List<Comment> commentsFromComment = commentMapper.findByParentId(parentComment.getId(), CommentTypeEnum.COMMENT.getType());
+            for (Comment childComment: commentsFromComment) {
+                commentMapper.deleteCommentById(childComment.getId());
+            }
+            //删完子评论删父评论
+            commentMapper.deleteCommentById(parentComment.getId());
+            /*//问题回复量减一
+            questionMapper.decCommentCount(questionId);*/
+        }
+    }
 }

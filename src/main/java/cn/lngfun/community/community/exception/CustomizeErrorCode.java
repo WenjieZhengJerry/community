@@ -1,6 +1,7 @@
 package cn.lngfun.community.community.exception;
 
 public enum CustomizeErrorCode implements ICustomizeErrorCode {
+    SUCCESS(2000, "请求成功"),
     QUESTION_NOT_FOUND(2001, "你找的问题不存在了，请换一个试试！！！"),
     TARGET_PARAM_NOT_FOUND(2002, "未选中任何问题或评论进行回复"),
     NO_LOGIN(2003, "当前操作需要登录，请登录后再重试"),
@@ -11,7 +12,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     READ_NOTIFICATION_FAIL(2008, "兄弟你读到别人的信息了"),
     NOTIFICATION_NOT_FOUND(2009, "这条消息离家出走了"),
     INVALID_QUESTION_ID(2010, "兄弟，你不能编辑别人的问题！！！"),
-    NETWORK_CONNECT_FAIL(2011,"网络连接超时，请稍后再试一下");
+    NETWORK_CONNECT_FAIL(2011,"网络连接超时，请稍后再试一下"),
+    DELETE_QUESTION_FAIL(2012, "大哥你怎么可以删别人的问题");
 
     private String message;
     private Integer code;

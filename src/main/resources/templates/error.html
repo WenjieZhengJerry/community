@@ -16,7 +16,10 @@
     <div class="jumbotron">
         <h1>出错了！！！</h1>
         <p th:text="${message}"></p>
-        <p><a class="btn btn-primary btn-lg" href="/" role="button">回到主页</a></p>
+        <p>
+            <a class="btn btn-primary btn-lg" href="/" role="button">回到主页</a>
+            <a class="btn btn-primary btn-lg" href="javascript:history.go(-1)" role="button">返回上一步</a>
+        </p>
     </div>
 </div>
 <div th:insert="footer :: foot"></div>
