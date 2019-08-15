@@ -6,6 +6,7 @@ import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.GithubProvider;
 import cn.lngfun.community.community.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class AuthorizeController {
 
     @Autowired
@@ -75,6 +77,7 @@ public class AuthorizeController {
             return "redirect:/";
         }else {
             //登录失败，重新登陆
+            log.error("GitHub登录失败,{}", githubUser);
             return "redirect:/";
         }
     }

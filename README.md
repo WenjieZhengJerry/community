@@ -26,5 +26,5 @@
 
 [lombok](https://projectlombok.org/setup/maven)
 
-##友情链接
+## 友情链接
 该项目的教程在[B站](https://www.bilibili.com/video/av50200264)
