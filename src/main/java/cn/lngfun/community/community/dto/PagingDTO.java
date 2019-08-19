@@ -69,6 +69,6 @@ public class PagingDTO<T> {
         }
         this.setPaging(totalPage, page);//装填页面元素
 
-        return size * (page - 1);
+        return page > 0 ? size * (page - 1) : 0;//如果页数等于0 代表这一页没有元素
     }
 }

@@ -9,8 +9,6 @@
 
 [Bootstrap 文档](https://v3.bootcss.com/components)
 
-[elasticsearch网站](https://elasticsearch.cn)
-
 [Github 登录文档](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/)
 
 [OkHttp](https://square.github.io/okhttp/)
@@ -27,4 +25,5 @@
 [lombok](https://projectlombok.org/setup/maven)
 
 ## 友情链接
-该项目的教程在[B站](https://www.bilibili.com/video/av50200264)
+- 该项目的教程在[B站](https://www.bilibili.com/video/av50200264)
+- 模仿的网站是[elasticsearch官网](https://elasticsearch.cn)

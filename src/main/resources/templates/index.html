@@ -49,7 +49,7 @@
             <nav aria-label="Page navigation" style="float: right;">
                 <ul class="pagination">
                     <li th:if="${pagingDTO.showFirstPage}">
-                        <a href="@{/(page=1,search=${search})}" aria-label="Previous">
+                        <a th:href="@{/(page=1,search=${search})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;&lt;</span>
                         </a>
                     </li>
