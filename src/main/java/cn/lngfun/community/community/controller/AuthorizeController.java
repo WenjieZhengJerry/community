@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 @Controller
@@ -90,6 +94,12 @@ public class AuthorizeController {
 
     /**
      * 通过邮箱登录
+     * 1.判断邮箱是否存在
+     * 2.判断密码是否正确
+     * 3.判断token是否过期
+     * 4.把从数据库中读取的token存入cookie中
+     * 5.完成登录
+     *
      * @param email
      * @param password
      * @param response
@@ -99,7 +109,7 @@ public class AuthorizeController {
     @ResponseBody
     public Object loginByEmail(@RequestParam(value = "email") String email,
                                @RequestParam(value = "password") String password,
-                               HttpServletResponse response) {
+                               HttpServletResponse response) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //前端校验
         if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
             return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_FORMAT_WRONG);
@@ -107,6 +117,11 @@ public class AuthorizeController {
         if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || password == null || "".equals(password)) {
             return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
         }
+        //md5加密，确定计算方法
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64en = new BASE64Encoder();
+        //加密后的密码
+        password = base64en.encode(md5.digest(password.getBytes("utf-8")));
         //登录
         Integer result = userService.loginByEmail(email, password, response);
         if (CustomizeErrorCode.EMAIL_NOT_FOUND.getCode().equals(result)) {

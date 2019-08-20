@@ -81,6 +81,6 @@ CREATE TABLE `user` (
   `bio` varchar(256) DEFAULT NULL,
   `avatar_url` varchar(100) DEFAULT NULL,
   `email` varchar(25) DEFAULT NULL,
-  `password` varchar(20) DEFAULT NULL,
+  `password` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
