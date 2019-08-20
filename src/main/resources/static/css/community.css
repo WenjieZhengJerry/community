@@ -114,3 +114,16 @@ body {
 .badge {
     background-color: #d9534f;
 }
+
+.login-form {
+    margin-left: 150px;
+}
+
+.login-btn {
+    background-color: #1a90ff;
+    width: 50%;
+}
+
+.login-form .form-control {
+    width: 50%;
+}

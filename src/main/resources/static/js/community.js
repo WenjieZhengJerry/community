@@ -124,6 +124,10 @@ function collapseComments(e) {
     }
 }
 
+/**
+ * 选中标签
+ * @param e
+ */
 function selectTag(e) {
     var previous = $("#tag").val();
     var value = e.getAttribute("data-tag");
@@ -137,10 +141,17 @@ function selectTag(e) {
     }
 }
 
+/**
+ * 展示标签栏
+ */
 function showSelectTag() {
     $("#select-tag").show();
 }
 
+/**
+ * 删除问题
+ * @param id
+ */
 function deleteQuestion(id) {
     if (confirm("删除问题无法复原，是否删除？")) {
         $.ajax({
@@ -157,4 +168,32 @@ function deleteQuestion(id) {
             }
         });
     }
+}
+
+function login() {
+    var email = $("#email").val();
+    var password = $("#password").val();
+
+    if (email == null || email == "") {
+        alert("邮箱不能为空");
+        return;
+    }
+    if (password == null || password == "") {
+        alert("密码不能为空");
+        return;
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/login",
+        data: $("#login-form").serialize(),
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+        }
+    })
 }

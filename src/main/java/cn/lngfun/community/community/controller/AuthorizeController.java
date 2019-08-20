@@ -2,6 +2,8 @@ package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.dto.AccessTokenDTO;
 import cn.lngfun.community.community.dto.GithubUser;
+import cn.lngfun.community.community.dto.ResultDTO;
+import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.GithubProvider;
@@ -11,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +49,7 @@ public class AuthorizeController {
      * 3.利用接收到的code再调用获取access_token的接口接收access_token
      * 4.利用接收到的access_token再调用获取user的接口接收user信息
      * 5.最后通过接收到的user信息返回给用户
+     *
      * @param code
      * @param state
      * @return
@@ -62,7 +67,7 @@ public class AuthorizeController {
 
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
-        if(githubUser != null && githubUser.getId() != null) {
+        if (githubUser != null && githubUser.getId() != null) {
             //登录成功，写入cookie
             User user = new User();
             String token = UUID.randomUUID().toString();
@@ -71,11 +76,12 @@ public class AuthorizeController {
             user.setName(githubUser.getName());
             user.setBio(githubUser.getBio());
             user.setAvatarUrl(githubUser.getAvatarUrl());
+            user.setEmail(githubUser.getEmail());
             userService.createOrUpdate(user);
 
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
-        }else {
+        } else {
             //登录失败，重新登陆
             log.error("GitHub登录失败,{}", githubUser);
             return "redirect:/";
@@ -83,7 +89,44 @@ public class AuthorizeController {
     }
 
     /**
+     * 通过邮箱登录
+     * @param email
+     * @param password
+     * @param response
+     * @return
+     */
+    @PostMapping("/login")
+    @ResponseBody
+    public Object loginByEmail(@RequestParam(value = "email") String email,
+                               @RequestParam(value = "password") String password,
+                               HttpServletResponse response) {
+        //前端校验
+        if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
+            return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_FORMAT_WRONG);
+        }
+        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || password == null || "".equals(password)) {
+            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
+        }
+        //登录
+        Integer result = userService.loginByEmail(email, password, response);
+        if (CustomizeErrorCode.EMAIL_NOT_FOUND.getCode().equals(result)) {
+            //邮箱未注册
+            return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_NOT_FOUND);
+        } else if (CustomizeErrorCode.PASSWORD_WRONG.getCode().equals(result)) {
+            //密码错误
+            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_WRONG);
+        } else if (CustomizeErrorCode.TOKEN_INVALID.getCode().equals(result)) {
+            //token过期
+            return ResultDTO.errorOf(CustomizeErrorCode.TOKEN_INVALID);
+        } else {
+            //登录成功
+            return ResultDTO.okOf();
+        }
+    }
+
+    /**
      * 退出登录
+     *
      * @param request
      * @param response
      * @return

@@ -9,6 +9,7 @@
 
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
     <script type="application/javascript">
         window.onload = function () {
             var closable = window.localStorage.getItem("closable");
@@ -92,6 +93,45 @@
         </div>
     </div>
 </div>
+<!--登录模态框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">登录 - 零分社区</h4>
+            </div>
+            <div class="modal-body">
+                <form id="login-form" class="login-form">
+                    <ul style="list-style: none;">
+                        <li><input type="text" id="email" name="email" placeholder="邮箱" class="form-control"></li>
+                        <br>
+                        <li><input type="password" id="password" name="password" placeholder="密码" class="form-control"></li>
+                        <br>
+                        <li>
+                            <label><input type="checkbox" value="1" name="remember">记住我&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            <a href="javascript:(0)">忘记密码</a>
+                        </li>
+                        <br>
+                        <li><a href="javascript:(0)" class="btn btn-large btn-primary login-btn" onclick="login()">登录</a></li>
+                        <br>
+                        <li><h4>第三方登录</h4></li>
+                        <li>
+                            <a th:href="@{https://github.com/login/oauth/authorize(client_id='1f883171aeed4ab10a2d',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}" class="btn btn-large btn-primary login-btn">
+                                <i class="icon-github"></i>
+                                Github 登录
+                            </a>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div th:insert="footer :: foot"></div>
 </body>
 </html>

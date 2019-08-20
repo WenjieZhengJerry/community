@@ -22,4 +22,10 @@ public interface UserMapper {
     //更新用户信息
     @Update("update user set name = #{name}, token = #{token}, avatar_url = #{avatarUrl}, gmt_modified = #{gmtModified} where id = #{id}")
     void update(User user);
+    //通过邮箱查找用户
+    @Select("select * from user where email = #{email}")
+    User findByEmail(@Param("email") String email);
+    //通过邮箱登录
+    @Select("select * from user where email = #{email} and password = #{password}")
+    User loginByEmail(@Param("email") String email, @Param("password") String password);
 }

@@ -40,7 +40,8 @@
                         </ul>
                     </li>
                     <li th:if="${session.user == null}">
-                        <a th:href="@{https://github.com/login/oauth/authorize(client_id='1f883171aeed4ab10a2d',redirect_uri=${#httpServletRequest.getServletContext().getAttribute('redirectUri')},scope='user',state=1)}">登录</a>
+<!--                        <a href="/login">登录</a>-->
+                        <a href="#" data-toggle="modal" data-target="#myModal">登录</a>
                     </li>
                 </ul>
             </div>
