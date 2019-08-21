@@ -25,7 +25,7 @@
                     <li th:if="${session.user != null}">
                         <a href="/publish"><span class="glyphicon glyphicon-pencil"></span> 发布</a>
                     </li>
-                    <li>
+                    <li th:if="${session.user != null}">
                         <a href="/profile/replies"><span class="glyphicon glyphicon-bell"></span> 通知  <span class="badge" th:if="${session.unreadCount != 0}" th:text="${session.unreadCount}"></span></a>
                     </li>
                     <li class="dropdown" th:if="${session.user != null}">

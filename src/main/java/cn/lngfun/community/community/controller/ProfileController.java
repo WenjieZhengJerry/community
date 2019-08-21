@@ -1,6 +1,8 @@
 package cn.lngfun.community.community.controller;
 
 import cn.lngfun.community.community.dto.PagingDTO;
+import cn.lngfun.community.community.exception.CustomizeErrorCode;
+import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.service.NotificationService;
@@ -31,7 +33,7 @@ public class ProfileController {
         //判断登录状态
         User user = (User) request.getSession().getAttribute("user");
         if(user == null) {
-            return "redirect:/";
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
 
         if("questions".equals(action)) {

@@ -1,3 +1,7 @@
+$(document).ready(function(){
+    $("#email").val($.cookie('tEmail'));
+});
+
 /**
  * 这里是评论问题
  */

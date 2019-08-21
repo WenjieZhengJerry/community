@@ -49,7 +49,12 @@ public class PublishController {
     }
 
     @GetMapping("/publish")
-    public String publish(Model model) {
+    public String publish(Model model, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        //判断登录状态
+        if (user == null) {
+            throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
+        }
         model.addAttribute("tags", TagCache.get());
         return "publish";
     }

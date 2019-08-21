@@ -61,7 +61,7 @@ public class UcloudProvider {
                         .createUrl();
                 return url;
             } else {
-                log.error("upload error,{}", response);
+                log.error("文件上传错误,{}", response);
                 throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
             }
         } catch (UfileClientException e) {
