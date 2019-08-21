@@ -102,6 +102,7 @@ public class AuthorizeController {
      *
      * @param email
      * @param password
+     * @param remember
      * @param response
      * @return
      */
@@ -109,6 +110,7 @@ public class AuthorizeController {
     @ResponseBody
     public Object loginByEmail(@RequestParam(value = "email") String email,
                                @RequestParam(value = "password") String password,
+                               @RequestParam(value = "remember", required = false) String remember,
                                HttpServletResponse response) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //前端校验
         if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
@@ -117,26 +119,18 @@ public class AuthorizeController {
         if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || password == null || "".equals(password)) {
             return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
         }
+        //记住邮箱
+        if (remember != null && "1".equals(remember)) {
+            //添加到cookie里
+            response.addCookie(new Cookie("tEmail", email));
+        }
         //md5加密，确定计算方法
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         BASE64Encoder base64en = new BASE64Encoder();
         //加密后的密码
         password = base64en.encode(md5.digest(password.getBytes("utf-8")));
         //登录
-        Integer result = userService.loginByEmail(email, password, response);
-        if (CustomizeErrorCode.EMAIL_NOT_FOUND.getCode().equals(result)) {
-            //邮箱未注册
-            return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_NOT_FOUND);
-        } else if (CustomizeErrorCode.PASSWORD_WRONG.getCode().equals(result)) {
-            //密码错误
-            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_WRONG);
-        } else if (CustomizeErrorCode.TOKEN_INVALID.getCode().equals(result)) {
-            //token过期
-            return ResultDTO.errorOf(CustomizeErrorCode.TOKEN_INVALID);
-        } else {
-            //登录成功
-            return ResultDTO.okOf();
-        }
+        return userService.loginByEmail(email, password, response);
     }
 
     /**
