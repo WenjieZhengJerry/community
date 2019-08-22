@@ -1,6 +1,7 @@
 package cn.lngfun.community.community.service;
 
 import cn.lngfun.community.community.dto.CommentDTO;
+import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.enums.CommentTypeEnum;
 import cn.lngfun.community.community.enums.NotificationStatusEnum;
 import cn.lngfun.community.community.enums.NotificationTypeEnum;
@@ -128,6 +129,7 @@ public class CommentService {
         return commentDTOList;
     }
 
+    @Transactional
     public void deleteCommentByParentId(Long questionId) {
         //找出这个问题的所有评论
         List<Comment> commentsFromQuestion = commentMapper.findByParentId(questionId, CommentTypeEnum.QUESTION.getType());
@@ -142,5 +144,20 @@ public class CommentService {
             /*//问题回复量减一
             questionMapper.decCommentCount(questionId);*/
         }
+    }
+
+    public Object likeOrDislike(Long commentId, Integer option) {
+        if (commentMapper.findById(commentId) == null) {
+            //要点赞的评论不存在
+            return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        if (option == 1) {//点赞
+            commentMapper.likeComment(commentId);
+        } else {//取消点赞
+            commentMapper.dislikeComment(commentId);
+        }
+
+        return ResultDTO.okOf();
     }
 }

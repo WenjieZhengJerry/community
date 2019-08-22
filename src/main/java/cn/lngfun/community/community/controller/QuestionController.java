@@ -48,17 +48,7 @@ public class QuestionController {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
 
-        Integer resultCode = questionService.deleteQuestion(questionId, user.getId());
-        if (resultCode == CustomizeErrorCode.QUESTION_NOT_FOUND.getCode()) {
-            //如果没有这个问题则无法删除
-            return ResultDTO.errorOf(CustomizeErrorCode.QUESTION_NOT_FOUND);
-        } else if (resultCode == CustomizeErrorCode.DELETE_QUESTION_FAIL.getCode()) {
-            //如果返回false则是当前用户删除的不是自己的问题
-            return ResultDTO.errorOf(CustomizeErrorCode.DELETE_QUESTION_FAIL);
-        } else {
-            //删除成功
-            return ResultDTO.okOf();
-        }
+        return questionService.deleteQuestion(questionId, user.getId());
     }
 
 }

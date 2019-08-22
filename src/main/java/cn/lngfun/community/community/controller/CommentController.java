@@ -55,4 +55,18 @@ public class CommentController {
         List<CommentDTO> commentDTOList = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
         return ResultDTO.okOf(commentDTOList);
     }
+
+    @PostMapping("/likeOrDislike")
+    @ResponseBody
+    public Object likeOrDislike (@RequestParam(name = "commentId") Long commentId,
+                                 @RequestParam(name = "option") Integer option,
+                                 HttpServletRequest request) {
+        //登录判断
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+        }
+
+        return commentService.likeOrDislike(commentId, option);
+    }
 }

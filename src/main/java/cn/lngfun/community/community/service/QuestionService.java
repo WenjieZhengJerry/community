@@ -2,6 +2,7 @@ package cn.lngfun.community.community.service;
 
 import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
+import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.mapper.CommentMapper;
@@ -148,19 +149,20 @@ public class QuestionService {
         return questionMapper.selectHotIssue();
     }
 
-    public Integer deleteQuestion(Long questionId, Long userId) {
+    public Object deleteQuestion(Long questionId, Long userId) {
         Question question = questionMapper.findById(questionId);
 
         if (question == null) {
             //问题没有找到
-            return CustomizeErrorCode.QUESTION_NOT_FOUND.getCode();
+            return ResultDTO.errorOf(CustomizeErrorCode.QUESTION_NOT_FOUND);
         } else if (!userId.equals(question.getCreator())) {
             //判断该问题的发布者是否和当前用户一致，防止有人通过问题id直接删除别人的问题
-            return CustomizeErrorCode.DELETE_QUESTION_FAIL.getCode();
+            return ResultDTO.errorOf(CustomizeErrorCode.DELETE_QUESTION_FAIL);
         } else {
+            //删除成功
             questionMapper.deleteQuestion(questionId);
             commentService.deleteCommentByParentId(questionId);
-            return CustomizeErrorCode.SUCCESS.getCode();
+            return ResultDTO.okOf();
         }
     }
 }

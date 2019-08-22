@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function () {
     $("#email").val($.cookie('tEmail'));
 });
 
@@ -174,6 +174,9 @@ function deleteQuestion(id) {
     }
 }
 
+/**
+ * 邮箱登录
+ */
 function login() {
     var email = $("#email").val();
     var password = $("#password").val();
@@ -199,5 +202,46 @@ function login() {
                 alert(response.message);
             }
         }
-    })
+    });
+}
+
+/**
+ * 点赞、取消点赞
+ * @param e
+ */
+function likeOrDislike(e) {
+    var id = e.getAttribute("data-id");
+    if (e.classList.contains("active")) {
+        e.classList.remove("active");
+        e.children[1].innerHTML = String(Number(e.children[1].innerHTML) - 1);
+
+        $.ajax({
+            type: "post",
+            url: "/likeOrDislike?commentId=" + id + "&option=0",
+            dataType: "json",
+            success: function (response) {
+                if (response.code != 200) {
+                    alert(response.message);
+                    e.classList.add("active");
+                    e.children[1].innerHTML = String(Number(e.children[1].innerHTML) + 1);
+                }
+            }
+        });
+    } else {
+        e.classList.add("active");
+        e.children[1].innerHTML = String(Number(e.children[1].innerHTML) + 1);
+
+        $.ajax({
+            type: "post",
+            url: "/likeOrDislike?commentId=" + id + "&option=1",
+            dataType: "json",
+            success: function (response) {
+                if (response.code != 200) {
+                    alert(response.message);
+                    e.classList.remove("active");
+                    e.children[1].innerHTML = String(Number(e.children[1].innerHTML) - 1);
+                }
+            }
+        });
+    }
 }

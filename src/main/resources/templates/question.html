@@ -83,7 +83,7 @@
                             </h5>
                             <div th:text="${comment.content}"></div>
                             <div class="menu">
-                                <span class="comment-icon">
+                                <span th:data-id="${comment.id}" onclick="likeOrDislike(this)" class="comment-icon">
                                     <span class="glyphicon glyphicon-thumbs-up"></span>
                                     <span th:text="${comment.likeCount}"></span>
                                 </span>
