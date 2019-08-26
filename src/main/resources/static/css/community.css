@@ -127,3 +127,51 @@ body {
 .login-form .form-control {
     width: 50%;
 }
+
+.information-div {
+    margin: 50px 10px;
+}
+
+.information-icon {
+    width: 280px;
+    height: 280px;
+}
+
+.information-save-btn {
+    margin-right: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.people-left-div {
+    padding-left: 110px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.people-img {
+    width: 150px;
+    height: 150px;
+}
+
+.people-info {
+    margin-top: 0px;
+    margin-bottom: 7px;
+}
+
+.setting-form {
+    margin-bottom: 10px;
+    width: 95%;
+    display: inline;
+}
+
+.setting-auth-code {
+    width: 66%;
+    display: inline;
+}
+
+.setting-btn {
+    margin-right: 18px;
+}

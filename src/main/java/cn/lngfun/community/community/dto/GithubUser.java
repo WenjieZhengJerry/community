@@ -10,4 +10,7 @@ public class GithubUser {
     private String bio;
     private String avatarUrl;
     private String email;
+    private String company;
+    private String blog;
+    private String location;
 }

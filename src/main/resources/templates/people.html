@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'零分社区-' + ${userName}"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="/css/community.css"/>
+
+    <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/jquery.cookie.js" type="application/javascript"></script>
+</head>
+<body>
+<div th:insert="navigation :: nav"></div>
+<div class="container-fluid main profile">
+    <div class="row">
+        <!--左边个人资料-->
+        <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 people-left-div">
+
+            <img class="media-object people-img" th:src="${user.avatarUrl}"><br>
+
+            <h5 class="people-info">昵称：<span th:text="${user.name}"></span></h5>
+            <h5 class="people-info">签名：<span th:text="${user.bio}"></span></h5>
+            <h5 class="people-info">位置：<span th:text="${user.location}"></span></h5>
+            <h5 class="people-info">公司：<span th:text="${user.company}"></span></h5>
+            <h5 class="people-info">邮箱：<span th:text="${user.email}"></span></h5>
+            <h5 class="people-info">博客：<a th:text="${user.blog}" th:href="${user.blog}"></a></h5>
+        </div>
+        <!--右边的提问-->
+        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+            <!--标题-->
+            <h2>Ta的提问</h2>
+            <hr>
+            <!--内容-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="media" th:each="question : ${pagingDTO.data}">
+                    <div class="media-left">
+                        <a href="javascript:void(0)">
+                            <img class="media-object" th:src="${question.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
+                        </h4>
+                        <br>
+                        <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
+                            <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span
+                                    th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                        </span>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+            <!--翻页导航栏-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <nav aria-label="Page navigation" style="float: right;">
+                    <ul class="pagination">
+                        <li th:if="${pagingDTO.showFirstPage}">
+                            <a th:href="@{/people/(page=${1},id=${user.id})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;&lt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagingDTO.showPrevious}">
+                            <a th:href="@{/people/(page=${pagingDTO.currentPage - 1},id=${user.id})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+                        <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
+                            <a th:text="${page}" th:href="@{/people/(page=${page},id=${user.id})}"></a>
+                        </li>
+                        <li th:if="${pagingDTO.showNext}">
+                            <a th:href="@{/people/(page=${pagingDTO.currentPage + 1},id=${user.id})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pagingDTO.showEndPage}">
+                            <a th:href="@{/people/(page=${pagingDTO.totalPage},id=${user.id})}" aria-label="Next">
+                                <span aria-hidden="true">&gt;&gt;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:insert="login :: login"></div>
+<div th:insert="footer :: foot"></div>
+</body>
+</html>

@@ -46,6 +46,54 @@ public class AuthorizeController {
     private UserService userService;
 
     /**
+     * {
+     *   "login": "WenjieZhengJerry",
+     *   "id": 43103543,
+     *   "node_id": "MDQ6VXNlcjQzMTAzNTQz",
+     *   "avatar_url": "https://avatars2.githubusercontent.com/u/43103543?v=4",
+     *   "gravatar_id": "",
+     *   "url": "https://api.github.com/users/WenjieZhengJerry",
+     *   "html_url": "https://github.com/WenjieZhengJerry",
+     *   "followers_url": "https://api.github.com/users/WenjieZhengJerry/followers",
+     *   "following_url": "https://api.github.com/users/WenjieZhengJerry/following{/other_user}",
+     *   "gists_url": "https://api.github.com/users/WenjieZhengJerry/gists{/gist_id}",
+     *   "starred_url": "https://api.github.com/users/WenjieZhengJerry/starred{/owner}{/repo}",
+     *   "subscriptions_url": "https://api.github.com/users/WenjieZhengJerry/subscriptions",
+     *   "organizations_url": "https://api.github.com/users/WenjieZhengJerry/orgs",
+     *   "repos_url": "https://api.github.com/users/WenjieZhengJerry/repos",
+     *   "events_url": "https://api.github.com/users/WenjieZhengJerry/events{/privacy}",
+     *   "received_events_url": "https://api.github.com/users/WenjieZhengJerry/received_events",
+     *   "type": "User",
+     *   "site_admin": false,
+     *   "name": "努力学习天天向上",
+     *   "company": "东莞理工学院",
+     *   "blog": "http://www.lngfun.cn",
+     *   "location": "广东广州",
+     *   "email": null,
+     *   "hireable": null,
+     *   "bio": "每天进步一点点",
+     *   "public_repos": 3,
+     *   "public_gists": 0,
+     *   "followers": 0,
+     *   "following": 1,
+     *   "created_at": "2018-09-09T03:00:29Z",
+     *   "updated_at": "2019-08-22T09:49:41Z",
+     *   "private_gists": 0,
+     *   "total_private_repos": 0,
+     *   "owned_private_repos": 0,
+     *   "disk_usage": 2681,
+     *   "collaborators": 0,
+     *   "two_factor_authentication": false,
+     *   "plan": {
+     *     "name": "free",
+     *     "space": 976562499,
+     *     "collaborators": 0,
+     *     "private_repos": 10000
+     *   }
+     * }
+     */
+    
+    /**
      * 调用Github登录的API，整个过程调用3个接口，包括获取code、获取access_token、获取user信息
      * 步骤：
      * 1.用户点击登录按钮
@@ -81,6 +129,9 @@ public class AuthorizeController {
             user.setBio(githubUser.getBio());
             user.setAvatarUrl(githubUser.getAvatarUrl());
             user.setEmail(githubUser.getEmail());
+            user.setCompany(githubUser.getCompany());
+            user.setBlog(githubUser.getBlog());
+            user.setLocation(githubUser.getLocation());
             userService.createOrUpdate(user);
 
             response.addCookie(new Cookie("token", token));

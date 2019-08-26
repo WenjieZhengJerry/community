@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${sectionName}"></title>
+    <title th:text="${'零分社区' + sectionName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -20,7 +20,7 @@
             <!--标题-->
             <h2><span th:text="${sectionName}"></span></h2>
             <hr>
-            <!--内容-->
+            <!--我的提问-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'questions'}">
                 <div class="media" th:each="question : ${pagingDTO.data}">
                     <div class="media-left">
@@ -51,6 +51,7 @@
                     <hr>
                 </div>
             </div>
+            <!--最新回复-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
                 <div class="media" th:each="notification : ${pagingDTO.data}">
                     <div class="media-body">
@@ -63,8 +64,85 @@
                     </div>
                 </div>
             </div>
+            <!--我的资料-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'information'}">
+                <div class="media information-div">
+                    <div class="media-left media-middle">
+                        <a href="#">
+                            <img class="media-object information-icon" th:src="${session.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <br>
+                        <div id="info-div">
+                            <ul class="list-group">
+                                <li class="list-group-item"><h4 class="media-heading">昵称：<span th:text="${session.user.name}"></span></h4></li>
+                                <li class="list-group-item"><h4 class="media-heading">签名：<span th:text="${session.user.bio}"></span></h4></li>
+                                <li class="list-group-item"><h4 class="media-heading">位置：<span th:text="${session.user.location}"></span></h4></li>
+                                <li class="list-group-item"><h4 class="media-heading">公司：<span th:text="${session.user.company}"></span></h4></li>
+                                <li class="list-group-item"><h4 class="media-heading">邮箱：<span th:text="${session.user.email}"></span></h4></li>
+                                <li class="list-group-item"><h4 class="media-heading">博客：<a th:text="${session.user.blog}" th:href="${session.user.blog}"></a></h4></li>
+                            </ul>
+                            <button type="button" class="btn btn-primary pull-right" onclick="editInformation(1)">编辑</button>
+                        </div>
+                        <div id="info-form" class="hidden">
+                            <form action="/editProfile" method="post">
+                                <ul class="list-group">
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="name" placeholder="昵称" type="text" th:value="${session.user.name}"></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="bio" placeholder="签名" type="text" th:value="${session.user.bio}" ></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="location" placeholder="位置" type="text" th:value="${session.user.location}" ></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="company" placeholder="公司" type="text" th:value="${session.user.company}" ></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="email" placeholder="邮箱" type="text" th:value="${session.user.email}" ></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="blog" placeholder="博客(链接)" type="text" th:value="${session.user.blog}" ></h4></li>
+                                </ul>
+                                <button type="button" class="btn btn-default pull-right" onclick="editInformation(0)">取消</button>
+                                <button type="submit" class="btn btn-success pull-right information-save-btn">保存</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--设置-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'setting'}">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <h3>修改密码</h3>
+                    <hr>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <form action="/profile/changePassword" method="post">
+                            <input type="password" class="form-control setting-form" id="old_password" name="old_password" placeholder="旧密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
+                            <input type="password" class="form-control setting-form" id="new_password" name="new_password" placeholder="新密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
+                            <input type="password" class="form-control setting-form" id="confirm_password" name="confirm_password" placeholder="确认密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
+                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="changePassword()">修改</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${session.user.email == null}">
+                    <h3>绑定邮箱</h3>
+                    <hr>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <form action="/profile/bindEmail" method="post">
+                            <input type="email" class="form-control setting-form" id="bind_email" name="setting_email" placeholder="邮箱">
+                            <input type="text" class="form-control setting-form setting-auth-code" name="authCode" placeholder="验证码">
+                            <button type="button" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode()">发送验证码</button>
+                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindEmail()">绑定</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${session.user.email != null}">
+                    <h3>修改邮箱</h3>
+                    <hr>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                        <form action="/profile/bindEmail" method="post">
+                            <input type="email" class="form-control setting-form" id="setting_email" name="setting_email" placeholder="邮箱" th:value="${session.user.email}">
+                            <input type="text" class="form-control setting-form setting-auth-code" name="authCode" placeholder="验证码">
+                            <button type="button" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode()">发送验证码</button>
+                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindEmail()">更改</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
             <!--翻页导航栏-->
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'questions' || section == 'replies'}">
                 <nav aria-label="Page navigation" style="float: right;">
                     <ul class="pagination">
                         <li th:if="${pagingDTO.showFirstPage}">
@@ -99,12 +177,20 @@
             <div class="list-group section">
                 <a href="/profile/questions"
                    th:class="${section == 'questions'} ? 'active list-group-item' : 'list-group-item'">
-                    <span class="glyphicon glyphicon-list"></span> 我的问题
+                    <span class="glyphicon glyphicon-list"></span> 我的提问
                 </a>
                 <a href="/profile/replies"
                    th:class="${section == 'replies'} ? 'active list-group-item' : 'list-group-item'">
                     <span class="glyphicon glyphicon-bell"></span> 最新回复
                     <span class="badge" th:if="${session.unreadCount != 0}" th:text="${session.unreadCount}"></span>
+                </a>
+                <a href="/profile/information"
+                   th:class="${section == 'information'} ? 'active list-group-item' : 'list-group-item'">
+                    <span class="glyphicon glyphicon-user"></span> 我的资料
+                </a>
+                <a href="/profile/setting"
+                   th:class="${section == 'setting'} ? 'active list-group-item' : 'list-group-item'">
+                    <span class="glyphicon glyphicon-cog"></span> 设置
                 </a>
             </div>
         </div>

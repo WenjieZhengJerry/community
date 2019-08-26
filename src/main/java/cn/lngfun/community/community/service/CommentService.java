@@ -62,7 +62,7 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
-
+            //插入评论
             commentMapper.insert(comment);
             //评论数加一
             commentMapper.incCommentCount(dbComment.getId());
@@ -74,6 +74,7 @@ public class CommentService {
             if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            //插入评论
             commentMapper.insert(comment);
             //评论数加一
             questionMapper.incCommentCount(question.getId());

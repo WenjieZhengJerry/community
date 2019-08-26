@@ -31,11 +31,15 @@ public class UserService {
             userMapper.insert(user);
         } else {
             //更新
-            dbUser.setGmtModified(System.currentTimeMillis());
             dbUser.setAvatarUrl(user.getAvatarUrl());
             dbUser.setName(user.getName());
             dbUser.setToken(user.getToken());
             dbUser.setEmail(user.getEmail());
+            dbUser.setBio(user.getBio());
+            dbUser.setBlog(user.getBlog());
+            dbUser.setCompany(user.getCompany());
+            dbUser.setLocation(user.getLocation());
+            dbUser.setGmtModified(System.currentTimeMillis());
             userMapper.update(dbUser);
         }
     }
@@ -68,5 +72,13 @@ public class UserService {
 
             return ResultDTO.okOf();
         }
+    }
+
+    public void updateProfile(User user) {
+        userMapper.update(user);
+    }
+
+    public User findUserById(Long id) {
+        return userMapper.findById(id);
     }
 }

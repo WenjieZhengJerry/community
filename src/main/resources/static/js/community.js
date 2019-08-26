@@ -86,10 +86,12 @@ function collapseComments(e) {
                 $.each(data.data.reverse(), function (index, comment) {
                     var mediaLeftElement = $("<div/>", {
                         "class": "media-left"
+                    }).append($("<a/>", {
+                        "href": "/people?id=" + comment.user.id
                     }).append($("<img/>", {
                         "class": "media-object img-rounded",
                         "src": comment.user.avatarUrl
-                    }));
+                    })));
 
                     var mediaBodyElement = $("<div/>", {
                         "class": "media-body"
@@ -244,4 +246,26 @@ function likeOrDislike(e) {
             }
         });
     }
+}
+
+function editInformation(action) {
+    if (action == 1) {
+        $("#info-div").attr("class", "hidden");
+        $("#info-form").removeClass("hidden");
+    } else {
+        $("#info-form").attr("class", "hidden");
+        $("#info-div").removeClass("hidden");
+    }
+}
+
+function changePassword() {
+
+}
+
+function bindEmail() {
+
+}
+
+function sendAuthCode() {
+
 }

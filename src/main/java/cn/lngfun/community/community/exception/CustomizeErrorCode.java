@@ -19,7 +19,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     PASSWORD_FORMAT_WRONG(2015, "兄弟，你的密码格式不正确，正确格式：6-18位，同时含有数字和字母"),
     PASSWORD_WRONG(2016, "密码错误，再想想？"),
     TOKEN_INVALID(2017, "token过期，请用第三方登录"),
-    FILE_UPLOAD_FAIL(2018, "文件上传失败");
+    FILE_UPLOAD_FAIL(2018, "文件上传失败"),
+    USER_NOT_FOUND(2019, "这个用户不存在哦");
 
     private String message;
     private Integer code;

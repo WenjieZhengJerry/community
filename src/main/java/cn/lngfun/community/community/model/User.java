@@ -14,4 +14,7 @@ public class User {
     private String avatarUrl;
     private String email;
     private String password;
+    private String company;
+    private String blog;
+    private String location;
 }
