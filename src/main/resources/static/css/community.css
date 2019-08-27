@@ -175,3 +175,7 @@ body {
 .setting-btn {
     margin-right: 18px;
 }
+
+.setting-password-tips {
+    color: #a0a0a0;
+}

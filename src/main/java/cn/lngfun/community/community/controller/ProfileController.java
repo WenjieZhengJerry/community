@@ -238,9 +238,6 @@ public class ProfileController {
                                  @RequestParam(name = "new_password") String newPassword,
                                  HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //前端校验
-        if (!oldPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || oldPassword == null || "".equals(oldPassword)) {
-            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
-        }
         if (!newPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || newPassword == null || "".equals(newPassword)) {
             return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
         }
@@ -254,11 +251,14 @@ public class ProfileController {
         //md5加密，确定计算方法
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         BASE64Encoder base64en = new BASE64Encoder();
-        //从前端传来的旧密码，加密后的旧密码
-        oldPassword = base64en.encode(md5.digest(oldPassword.getBytes("utf-8")));
-        //判断旧密码是否输入正确
-        if (!oldPassword.equals(dbPassword)) {
-            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_WRONG);
+        //如果数据库的密码不为null，则判断旧密码是否正确
+        if (dbPassword != null) {
+            //从前端传来的旧密码，加密后的旧密码
+            oldPassword = base64en.encode(md5.digest(oldPassword.getBytes("utf-8")));
+            //判断旧密码是否输入正确
+            if (!oldPassword.equals(dbPassword)) {
+                return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_WRONG);
+            }
         }
         //加密新密码
         newPassword = base64en.encode(md5.digest(newPassword.getBytes("utf-8")));

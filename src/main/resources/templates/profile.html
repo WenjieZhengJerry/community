@@ -116,6 +116,12 @@
                             <button type="button" class="btn btn-primary pull-right setting-btn" onclick="changePassword()">修改</button>
                         </form>
                     </div>
+                    <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12 setting-password-tips">
+                        提示：
+                        <ul>
+                            <li>如果未设置密码则“旧密码”一栏不需要填写</li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${session.user.email == null}">
                     <h3>绑定邮箱</h3>
