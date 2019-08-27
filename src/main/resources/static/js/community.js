@@ -248,6 +248,10 @@ function likeOrDislike(e) {
     }
 }
 
+/**
+ * 编辑个人资料
+ * @param action
+ */
 function editInformation(action) {
     if (action == 1) {
         $("#info-div").attr("class", "hidden");
@@ -258,14 +262,120 @@ function editInformation(action) {
     }
 }
 
+/**
+ * 修改密码
+ */
 function changePassword() {
+    if ($("#old_password").val() == $("#new_password").val()) {
+        alert("新密码和旧密码不能一样");
+        return;
+    }
+    if ($("#new_password").val() != $("#confirm_password").val()) {
+        alert("新密码和确认密码不一致");
+        return;
+    }
 
+    $.ajax({
+        type: "post",
+        url: "/changePassword",
+        data: $("#change-password-form").serialize(),
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                alert("密码修改成功");
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+        }
+    });
 }
 
-function bindEmail() {
+/**
+ * 绑定或修改邮箱
+ * @param action
+ */
+function bindOrEditEmail(action) {
+    var form;
+    var result = "";
+    if ("bind" == action) {
+        form = $("#bind-email-form");
+        result = "绑定成功";
+    }
+    if ("edit" == action) {
+        form = $("#edit-email-form");
+        result = "修改成功";
+    }
 
+    $.ajax({
+        type: "post",
+        url: "/editEmail",
+        data: form.serialize(),
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                alert(result);
+                window.location.reload();
+            } else {
+                alert(response.message);
+            }
+        }
+    });
 }
 
-function sendAuthCode() {
+/**
+ * 定时器
+ * @param obj
+ * @param countdown
+ */
+function settime(obj, countdown) {
+    if (countdown == 0) {
+        obj.removeAttribute("disabled");
+        obj.value = "获取验证码";
+        countdown = 60;
+        return;
+    } else {
+        obj.setAttribute("disabled", "disabled");
+        obj.value = "重新发送(" + countdown + ")";
+        countdown--;
+    }
+    setTimeout(function () {
+            settime(obj, countdown)
+        }
+        , 1000)
+}
 
+/**
+ * 发送验证码
+ * @param action
+ * @param obj
+ */
+function sendAuthCode(action, obj) {
+    var email;
+    var countdown = 60;
+    if ("bind" == action) {
+        email = $("#bind_email").val();
+        settime(obj, countdown);
+    }
+    if ("edit" == action) {
+        if ($("#iniEmail").val() != null && $("#iniEmail").val() == $("#setting_email").val()) {
+            alert("修改的邮箱不能和之前的邮箱一样");
+            return;
+        }
+        email = $("#setting_email").val();
+        settime(obj, countdown);
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/getAuthCode?email=" + email,
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                alert("验证码发送成功，请登录邮箱获取验证码");
+            } else {
+                alert(response.message);
+            }
+        }
+    });
 }

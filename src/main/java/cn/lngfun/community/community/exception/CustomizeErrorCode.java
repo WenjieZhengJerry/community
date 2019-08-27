@@ -20,7 +20,10 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     PASSWORD_WRONG(2016, "密码错误，再想想？"),
     TOKEN_INVALID(2017, "token过期，请用第三方登录"),
     FILE_UPLOAD_FAIL(2018, "文件上传失败"),
-    USER_NOT_FOUND(2019, "这个用户不存在哦");
+    USER_NOT_FOUND(2019, "这个用户不存在哦"),
+    EMAIL_SEND_FAIL(2020, "验证码发送失败，请稍后再试"),
+    AUTH_CODE_INVALID(2021, "验证码过期，请重新获取"),
+    AUTH_CODE_WRONG(2022, "验证码错误，请重新输入");
 
     private String message;
     private Integer code;

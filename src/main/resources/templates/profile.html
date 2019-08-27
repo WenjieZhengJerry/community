@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${'零分社区' + sectionName}"></title>
+    <title th:text="${'零分社区-' + sectionName}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -92,7 +92,8 @@
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="bio" placeholder="签名" type="text" th:value="${session.user.bio}" ></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="location" placeholder="位置" type="text" th:value="${session.user.location}" ></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="company" placeholder="公司" type="text" th:value="${session.user.company}" ></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="email" placeholder="邮箱" type="text" th:value="${session.user.email}" ></h4></li>
+<!--                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="email" placeholder="邮箱" type="text" th:value="${session.user.email}" ></h4></li>-->
+                                    <li class="list-group-item"><h4 class="media-heading">邮箱：<span th:text="${session.user.email}"></span></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="blog" placeholder="博客(链接)" type="text" th:value="${session.user.blog}" ></h4></li>
                                 </ul>
                                 <button type="button" class="btn btn-default pull-right" onclick="editInformation(0)">取消</button>
@@ -108,7 +109,7 @@
                     <h3>修改密码</h3>
                     <hr>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <form action="/profile/changePassword" method="post">
+                        <form id="change-password-form">
                             <input type="password" class="form-control setting-form" id="old_password" name="old_password" placeholder="旧密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
                             <input type="password" class="form-control setting-form" id="new_password" name="new_password" placeholder="新密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
                             <input type="password" class="form-control setting-form" id="confirm_password" name="confirm_password" placeholder="确认密码：6-18位，同时含有数字和字母"><span class="glyphicon glyphicon-ok hidden"></span>
@@ -120,11 +121,11 @@
                     <h3>绑定邮箱</h3>
                     <hr>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <form action="/profile/bindEmail" method="post">
+                        <form id="bind-email-form">
                             <input type="email" class="form-control setting-form" id="bind_email" name="setting_email" placeholder="邮箱">
                             <input type="text" class="form-control setting-form setting-auth-code" name="authCode" placeholder="验证码">
-                            <button type="button" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode()">发送验证码</button>
-                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindEmail()">绑定</button>
+                            <input type="button" id="bind-btn" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode('bind',this)" value="获取验证码">
+                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindOrEditEmail('bind')">绑定</button>
                         </form>
                     </div>
                 </div>
@@ -132,11 +133,12 @@
                     <h3>修改邮箱</h3>
                     <hr>
                     <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                        <form action="/profile/bindEmail" method="post">
+                        <form id="edit-email-form">
+                            <input type="hidden" id="iniEmail" th:value="${session.user.email}">
                             <input type="email" class="form-control setting-form" id="setting_email" name="setting_email" placeholder="邮箱" th:value="${session.user.email}">
                             <input type="text" class="form-control setting-form setting-auth-code" name="authCode" placeholder="验证码">
-                            <button type="button" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode()">发送验证码</button>
-                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindEmail()">更改</button>
+                            <input type="button" id="edit-btn" class="btn btn-success pull-right setting-btn" onclick="sendAuthCode('edit',this)" value="获取验证码">
+                            <button type="button" class="btn btn-primary pull-right setting-btn" onclick="bindOrEditEmail('edit')">修改</button>
                         </form>
                     </div>
                 </div>

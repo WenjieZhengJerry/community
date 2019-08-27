@@ -30,6 +30,8 @@ public class SessionInterceptor implements HandlerInterceptor {
                 if(cookie.getName().equals("token")) {
                     User user = userMapper.findByToken(cookie.getValue());
                     if(user != null) {
+                        //把密码设置为null
+                        user.setPassword(null);
                         request.getSession().setAttribute("user", user);
                         //设置未读信息数量
                         Integer unreadCount = notificationService.getUnreadCount(user.getId());
