@@ -351,7 +351,7 @@ function settime(obj, countdown) {
  */
 function sendAuthCode(action, obj) {
     var email;
-    var countdown = 60;
+    var countdown = 30;
     if ("bind" == action) {
         email = $("#bind_email").val();
         settime(obj, countdown);

@@ -29,7 +29,7 @@ public class EmailProvider {
             //设置SMTP邮件服务器，比如:smtp.qq.com
             simpleEmail.setHostName(emailHost);
             //设置邮件服务器端口号，默认为25
-            simpleEmail.setSmtpPort(465);
+            simpleEmail.setSmtpPort(587);
             //设置登入认证服务器的 用户名 和 授权密码 （发件人））
             simpleEmail.setAuthentication(emailUserName, emailPassword);
             //设置发送源邮箱
