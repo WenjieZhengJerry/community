@@ -332,7 +332,6 @@ function settime(obj, countdown) {
     if (countdown == 0) {
         obj.removeAttribute("disabled");
         obj.value = "获取验证码";
-        countdown = 60;
         return;
     } else {
         obj.setAttribute("disabled", "disabled");

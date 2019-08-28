@@ -12,7 +12,7 @@ public class EmailProvider {
     private static String emailHost = "smtp.qq.com";
     private static String emailUserEmail = "2388623483@qq.com";
     private static String emailUserName = "2388623483";
-    private static String emailPassword = "bijrvkhszwnhdihi";
+    private static String emailPassword = "wpustueczlbtdjci";
 
     /**
      * 发送验证码到指定邮箱
@@ -26,8 +26,10 @@ public class EmailProvider {
         //设置字符编码方式
         simpleEmail.setCharset("UTF-8");
         try {
-            //设置SMTP邮件服务器，比如:smtp.163.com
+            //设置SMTP邮件服务器，比如:smtp.qq.com
             simpleEmail.setHostName(emailHost);
+            //设置邮件服务器端口号，默认为25
+            simpleEmail.setSmtpPort(465);
             //设置登入认证服务器的 用户名 和 授权密码 （发件人））
             simpleEmail.setAuthentication(emailUserName, emailPassword);
             //设置发送源邮箱
