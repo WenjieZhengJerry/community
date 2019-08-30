@@ -374,6 +374,7 @@ function sendAuthCode(action, obj) {
                 alert("验证码发送成功，请登录邮箱获取验证码");
             } else {
                 alert(response.message);
+                window.location.reload();
             }
         }
     });

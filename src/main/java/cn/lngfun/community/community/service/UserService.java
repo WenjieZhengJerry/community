@@ -81,4 +81,8 @@ public class UserService {
     public User findUserById(Long id) {
         return userMapper.findById(id);
     }
+
+    public boolean hasEmail(String email) {
+        return userMapper.hasEmail(email);
+    }
 }

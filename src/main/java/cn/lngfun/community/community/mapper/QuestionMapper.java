@@ -52,5 +52,10 @@ public interface QuestionMapper {
     //通过问题id删除问题
     @Delete("delete from question where id = #{questionId}")
     void deleteQuestion(@Param(value = "questionId") Long questionId);
-
+    //计算所有符合标签的问题总数
+    @Select("select count(1) from question where tag regexp #{tag}")
+    Integer countByTag(@Param(value = "tag") String tag);
+    //通过标签列出一页问题
+    @Select("select * from question where tag regexp #{tag} order by gmt_modified DESC limit #{offset},#{size}")
+    List<Question> listByTag(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "tag") String tag);
 }

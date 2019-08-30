@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${'零分社区-' + question.title}"></title>
+    <title th:text="${question.title + '-零分社区'}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -145,7 +145,7 @@
                 <h4 class="question-tilte">发起人</h4>
                 <div class="media">
                     <div class="media-left">
-                        <a href="#">
+                        <a th:href="@{/people(id=${question.user.id})}">
                             <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
                         </a>
                     </div>
@@ -154,7 +154,15 @@
                             <span th:text="${question.user.name}"></span>
                         </h5>
                     </div>
+                    <ul class="question-user-info">
+                        <li th:if="${question.user.bio != null && question.user.bio != ''}"><span class="glyphicon glyphicon-book"></span>&nbsp;&nbsp;<span th:text="${question.user.bio}"></span></li>
+                        <li th:if="${question.user.company != null && question.user.company != ''}"><span class="glyphicon glyphicon-briefcase"></span>&nbsp;&nbsp;<span th:text="${question.user.company}"></span></li>
+                        <li th:if="${question.user.location != null && question.user.location != ''}"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;&nbsp;<span th:text="${question.user.location}"></span></li>
+                        <li th:if="${question.user.email != null && question.user.email != ''}"><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;<a th:text="${question.user.email}" th:href="@{'mailto:'+${question.user.email}}"></a></li>
+                        <li th:if="${question.user.blog != null && question.user.blog != ''}"><span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;<a th:text="${question.user.blog}" th:href="${question.user.blog}"></a></li>
+                    </ul>
                 </div>
+
             </div>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

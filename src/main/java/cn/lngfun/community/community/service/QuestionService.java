@@ -33,13 +33,19 @@ public class QuestionService {
     private CommentService commentService;
 
 
-    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search) {
+    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search, String tag) {
         //计算从第几页开始
         Integer offset = pagingDTO.calculateOffset(totalCount, page, size);
         //获取这一页的所有问题
         List<Question> questions;
-        if (search == null || "".equals(search)) {//无搜索条件
-            questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
+        if (StringUtils.isBlank(search)) {
+            //无搜索条件
+            if (StringUtils.isBlank(tag)) {
+                //无标签条件
+                questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
+            } else {
+                questions = questionMapper.listByTag(offset, size, tag);
+            }
         } else {
             questions = questionMapper.listBySearch(offset, size, search);
         }
@@ -59,27 +65,35 @@ public class QuestionService {
 
     /**
      * 列出所有问题列表
+     *
      * @param page
      * @param size
      * @return
      */
-    public PagingDTO list(Integer page, Integer size, String search) {
+    public PagingDTO list(Integer page, Integer size, String search, String tag) {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         //计算问题总数
         Integer totalCount;
-        if (search == null || "".equals(search)) {//无搜索条件
-            totalCount = questionMapper.count();
+        if (StringUtils.isBlank(search)) {
+            //无搜索条件
+            if (StringUtils.isBlank(tag)) {
+                //无标签条件
+                totalCount = questionMapper.count();
+            } else {
+                totalCount = questionMapper.countByTag(tag);
+            }
         } else {
             totalCount = questionMapper.countBySearch(search);
         }
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, null, search));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, null, search, tag));//装填页面数据
 
         return pagingDTO;
     }
 
     /**
      * 通过userId列出问题列表
+     *
      * @param userId
      * @param page
      * @param size
@@ -89,7 +103,7 @@ public class QuestionService {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = questionMapper.countByUserId(userId);
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, userId, null));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, userId, null, null));//装填页面数据
 
         return pagingDTO;
     }

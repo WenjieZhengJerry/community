@@ -176,6 +176,10 @@ public class ProfileController {
         if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
             return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_FORMAT_WRONG);
         }
+        //判断邮箱否手被绑定
+        if (userService.hasEmail(email)) {
+            return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_IS_EXIST);
+        }
         //判断登录状态
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {

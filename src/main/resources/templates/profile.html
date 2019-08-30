@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${'零分社区-' + sectionName}"></title>
+    <title th:text="${sectionName + '-零分社区'}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -24,7 +24,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'questions'}">
                 <div class="media" th:each="question : ${pagingDTO.data}">
                     <div class="media-left">
-                        <a href="#">
+                        <a href="javascript:void(0)">
                             <img class="media-object" th:src="${question.user.avatarUrl}">
                         </a>
                     </div>
@@ -68,7 +68,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'information'}">
                 <div class="media information-div">
                     <div class="media-left media-middle">
-                        <a href="#">
+                        <a href="javascript:void(0)">
                             <img class="media-object information-icon" th:src="${session.user.avatarUrl}">
                         </a>
                     </div>
@@ -92,7 +92,6 @@
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="bio" placeholder="签名" type="text" th:value="${session.user.bio}" ></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="location" placeholder="位置" type="text" th:value="${session.user.location}" ></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="company" placeholder="公司" type="text" th:value="${session.user.company}" ></h4></li>
-<!--                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="email" placeholder="邮箱" type="text" th:value="${session.user.email}" ></h4></li>-->
                                     <li class="list-group-item"><h4 class="media-heading">邮箱：<span th:text="${session.user.email}"></span></h4></li>
                                     <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="blog" placeholder="博客(链接)" type="text" th:value="${session.user.blog}" ></h4></li>
                                 </ul>

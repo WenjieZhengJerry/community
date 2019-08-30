@@ -28,4 +28,7 @@ public interface UserMapper {
     //通过邮箱登录
     @Select("select * from user where email = #{email} and password = #{password}")
     User loginByEmail(@Param("email") String email, @Param("password") String password);
+    //判断邮箱是否存在
+    @Select("select * from user where email = #{email}")
+    boolean hasEmail(@Param("email") String email);
 }

@@ -21,14 +21,14 @@ public class HotTagTasks {
     @Autowired
     private HotTagCache hotTagCache;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 20000)
     public void hotTagSchedule() {
         int offset = 0;
-        int size = 2;
+        int size = 10;
         log.info("开始时间是：{}", new Date());
-        List<Question> list = new ArrayList<Question>();
+        List<Question> list = new ArrayList<>();
         Map<String, Integer> priorities = new HashMap<>();
-
+        //取出所有问题的标签并统计权重
         while (offset == 0 || list.size() == size) {
             list = questionMapper.list(offset, size);
             for (Question question : list) {
@@ -44,13 +44,7 @@ public class HotTagTasks {
             }
             offset += size;
         }
-
-        hotTagCache.setTags(priorities);
-        hotTagCache.getTags().forEach(
-                (k, v) -> {
-                    System.out.println(k + ":" + v);
-                }
-        );
-        log.info("结束时间是：{}", new Date());
+        //给标签根据权重从大到小排序
+        hotTagCache.sortTags(priorities);
     }
 }

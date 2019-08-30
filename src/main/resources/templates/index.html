@@ -51,25 +51,25 @@
             <nav aria-label="Page navigation" style="float: right;">
                 <ul class="pagination">
                     <li th:if="${pagingDTO.showFirstPage}">
-                        <a th:href="@{/(page=1,search=${search})}" aria-label="Previous">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;&lt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showPrevious}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search})}" aria-label="Previous">
+                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search},tag=${tag})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
                     <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
-                        <a th:text="${page}" th:href="@{/(page=${page},search=${search})}"></a>
+                        <a th:text="${page}" th:href="@{/(page=${page},search=${search},tag=${tag})}"></a>
                     </li>
                     <li th:if="${pagingDTO.showNext}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search},tag=${tag})}" aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showEndPage}">
-                        <a th:href="@{/(page=${pagingDTO.totalPage},search=${search})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.totalPage},search=${search},tag=${tag})}" aria-label="Next">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>
@@ -79,10 +79,20 @@
         <!--右边信息块-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-div">
-                <h4>热门话题</h4>
+                <h4><span class="glyphicon glyphicon-fire"></span> 热门话题</h4>
                 <ul class="question-related">
                     <li th:each="hotIssue : ${hotIssues}">
-                        <a th:href="@{'/question/'+${hotIssue.id}}" th:text="${hotIssue.title}"></a>
+                        <a th:href="@{'/question/'+${hotIssue.id}}" th:text="${#strings.length(hotIssue.title) <= 11 ? hotIssue.title : #strings.substring(hotIssue.title,0,11) + '...'}" th:title="${hotIssue.title}"></a>
+                        <span class="pull-right hotIssue-comment-count" th:text="${hotIssue.commentCount + '个回复'}"></span>
+                    </li>
+                </ul>
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4><span class="glyphicon glyphicon-fire"></span> 热门标签</h4>
+                <ul class="question-related">
+                    <li th:each="hotTag : ${hotTags}">
+                        <a th:href="@{/(page=1,search=${search},tag=${hotTag})}" th:text="${hotTag}"></a>
                     </li>
                 </ul>
             </div>
