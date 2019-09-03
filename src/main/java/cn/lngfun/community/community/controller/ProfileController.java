@@ -142,6 +142,8 @@ public class ProfileController {
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
         }
+        //把密码去掉
+        user.setPassword(null);
         //判断点击的人是否为登录后的自己
         if (user.equals(request.getSession().getAttribute("user"))) {
             model.addAttribute("section", "questions");
