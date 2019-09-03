@@ -98,10 +98,10 @@ function collapseComments(e) {
                     }).append($("<h5/>", {
                         "class": "media-heading",
                         "html": comment.user.name
-                    })).append($("<span/>", {
+                    }))/*.append($("<span/>", {
                         "class": "pull-right",
                         "html": "<a href='javascript:void(0)'>回复</a>"
-                    })).append($("<div/>", {
+                    }))*/.append($("<div/>", {
                         "html": comment.content
                     })).append($("<div/>", {
                         "class": "menu"
@@ -212,15 +212,29 @@ function login() {
  * @param e
  */
 function likeOrDislike(e) {
-    var id = e.getAttribute("data-id");
+    var parentId = e.getAttribute("data-id");
+    var type = e.getAttribute("data-type");
+    if (type == "question") {
+        type = 1;
+    } else {
+        type = 2;
+    }
+
     if (e.classList.contains("active")) {
+        //取消点赞
         e.classList.remove("active");
         e.children[1].innerHTML = String(Number(e.children[1].innerHTML) - 1);
 
         $.ajax({
             type: "post",
-            url: "/likeOrDislike?commentId=" + id + "&option=0",
+            url: "/likeOrDislike",
             dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "parentId": parentId,
+                "option": 4,
+                "type": type
+            }),
             success: function (response) {
                 if (response.code != 200) {
                     alert(response.message);
@@ -230,13 +244,20 @@ function likeOrDislike(e) {
             }
         });
     } else {
+        //点赞
         e.classList.add("active");
         e.children[1].innerHTML = String(Number(e.children[1].innerHTML) + 1);
 
         $.ajax({
             type: "post",
-            url: "/likeOrDislike?commentId=" + id + "&option=1",
+            url: "/likeOrDislike",
             dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify({
+                "parentId": parentId,
+                "option": 3,
+                "type": type
+            }),
             success: function (response) {
                 if (response.code != 200) {
                     alert(response.message);

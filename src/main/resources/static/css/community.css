@@ -191,3 +191,11 @@ body {
 .setting-password-tips {
     color: #a0a0a0;
 }
+
+.hotTag {
+    line-height: 25px;
+}
+
+.hotTag a {
+    text-decoration: none;
+}

@@ -1,20 +1,16 @@
 package cn.lngfun.community.community.service;
 
 import cn.lngfun.community.community.dto.CommentDTO;
+import cn.lngfun.community.community.dto.LikeDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.enums.CommentTypeEnum;
+import cn.lngfun.community.community.enums.LikeTypeAndOptionEnum;
 import cn.lngfun.community.community.enums.NotificationStatusEnum;
 import cn.lngfun.community.community.enums.NotificationTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
-import cn.lngfun.community.community.mapper.CommentMapper;
-import cn.lngfun.community.community.mapper.NotificationMapper;
-import cn.lngfun.community.community.mapper.QuestionMapper;
-import cn.lngfun.community.community.mapper.UserMapper;
-import cn.lngfun.community.community.model.Comment;
-import cn.lngfun.community.community.model.Notification;
-import cn.lngfun.community.community.model.Question;
-import cn.lngfun.community.community.model.User;
+import cn.lngfun.community.community.mapper.*;
+import cn.lngfun.community.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +36,9 @@ public class CommentService {
 
     @Autowired
     private NotificationMapper notificationMapper;
+
+    @Autowired
+    private LikeMapper likeMapper;
 
     @Transactional
     public void insert(Comment comment, User commentator) {
@@ -101,29 +100,40 @@ public class CommentService {
         notificationMapper.insert(notification);
     }
 
-    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type, User user) {
         List<Comment> comments = commentMapper.findByParentId(id, type.getType());
 
         if (comments.size() == 0) {
             return new ArrayList<>();
         }
+
+
         //获取去重评论人
         Set<Long> commentators = comments.stream().map(comment -> comment.getCommentator()).collect(Collectors.toSet());
 
         //获取评论人信息并转换成 Map
         List<User> users = new ArrayList<>();
         for (Long commentator : commentators) {
-            User user = userMapper.findById(commentator);
-            users.add(user);
+            User dbUser = userMapper.findById(commentator);
+            users.add(dbUser);
         }
 
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(user -> user.getId(), user -> user));
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(uid -> uid.getId(), mUser -> mUser));
 
         //转换comment为commentDTO
         List<CommentDTO> commentDTOList = comments.stream().map(comment -> {
             CommentDTO commentDTO = new CommentDTO();
             BeanUtils.copyProperties(comment, commentDTO);
             commentDTO.setUser(userMap.get(comment.getCommentator()));
+            if (user != null) {
+                List<Like> likes = likeMapper.findByParentId(comment.getId());
+                for (Like like : likes) {
+                    if (like.getUserId().equals(user.getId())) {
+                        commentDTO.setLiked(true);
+                        break;
+                    }
+                }
+            }
             return commentDTO;
         }).collect(Collectors.toList());
 
@@ -142,21 +152,33 @@ public class CommentService {
             }
             //删完子评论删父评论
             commentMapper.deleteCommentById(parentComment.getId());
+            //删除点赞记录
+            likeMapper.deleteByParentId(parentComment.getId());
             /*//问题回复量减一
             questionMapper.decCommentCount(questionId);*/
         }
     }
 
-    public Object likeOrDislike(Long commentId, Integer option) {
-        if (commentMapper.findById(commentId) == null) {
+    @Transactional
+    public Object likeOrDislike(LikeDTO likeDTO, Long userId) {
+        if (commentMapper.findById(likeDTO.getParentId()) == null) {
             //要点赞的评论不存在
             return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
         }
 
-        if (option == 1) {//点赞
-            commentMapper.likeComment(commentId);
-        } else {//取消点赞
-            commentMapper.dislikeComment(commentId);
+        if (likeDTO.getOption().equals(LikeTypeAndOptionEnum.LIKE.getType())) {
+            //点赞
+            commentMapper.likeComment(likeDTO.getParentId());
+            Like like = new Like();
+            like.setParentId(likeDTO.getParentId());
+            like.setType(likeDTO.getType());
+            like.setUserId(userId);
+            like.setGmtCreate(System.currentTimeMillis());
+            likeMapper.like(like);
+        } else {
+            //取消点赞
+            commentMapper.dislikeComment(likeDTO.getParentId());
+            likeMapper.dislike(userId, likeDTO.getParentId());
         }
 
         return ResultDTO.okOf();

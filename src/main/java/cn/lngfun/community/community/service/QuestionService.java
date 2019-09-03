@@ -1,19 +1,24 @@
 package cn.lngfun.community.community.service;
 
+import cn.lngfun.community.community.dto.LikeDTO;
 import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
+import cn.lngfun.community.community.enums.LikeTypeAndOptionEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.mapper.CommentMapper;
+import cn.lngfun.community.community.mapper.LikeMapper;
 import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
+import cn.lngfun.community.community.model.Like;
 import cn.lngfun.community.community.model.Question;
 import cn.lngfun.community.community.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +36,9 @@ public class QuestionService {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private LikeMapper likeMapper;
 
 
     private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search, String tag) {
@@ -108,15 +116,24 @@ public class QuestionService {
         return pagingDTO;
     }
 
-    public QuestionDTO findById(Long id) {
+    public QuestionDTO findById(Long id, User user) {
         Question question = questionMapper.findById(id);
         if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
-        User user = userMapper.findById(question.getCreator());
-        questionDTO.setUser(user);
+        User dbUser = userMapper.findById(question.getCreator());
+        questionDTO.setUser(dbUser);
+        if (user != null) {
+            List<Like> likes = likeMapper.findByParentId(question.getId());
+            for (Like like : likes) {
+                if (like.getUserId().equals(user.getId())) {
+                    questionDTO.setLiked(true);
+                    break;
+                }
+            }
+        }
 
         return questionDTO;
     }
@@ -163,6 +180,7 @@ public class QuestionService {
         return questionMapper.selectHotIssue();
     }
 
+    @Transactional
     public Object deleteQuestion(Long questionId, Long userId) {
         Question question = questionMapper.findById(questionId);
 
@@ -175,8 +193,34 @@ public class QuestionService {
         } else {
             //删除成功
             questionMapper.deleteQuestion(questionId);
+            likeMapper.deleteByParentId(questionId);
             commentService.deleteCommentByParentId(questionId);
             return ResultDTO.okOf();
         }
+    }
+
+    @Transactional
+    public Object likeOrDislike(LikeDTO likeDTO, Long userId) {
+        if (questionMapper.findById(likeDTO.getParentId()) == null) {
+            //要点赞的问题不存在
+            return ResultDTO.errorOf(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
+
+        if (likeDTO.getOption().equals(LikeTypeAndOptionEnum.LIKE.getType())) {
+            //点赞
+            questionMapper.likeComment(likeDTO.getParentId());
+            Like like = new Like();
+            like.setParentId(likeDTO.getParentId());
+            like.setType(likeDTO.getType());
+            like.setUserId(userId);
+            like.setGmtCreate(System.currentTimeMillis());
+            likeMapper.like(like);
+        } else {
+            //取消点赞
+            questionMapper.dislikeComment(likeDTO.getParentId());
+            likeMapper.dislike(userId, likeDTO.getParentId());
+        }
+
+        return ResultDTO.okOf();
     }
 }

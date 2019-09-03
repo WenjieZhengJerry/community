@@ -12,7 +12,7 @@ public class HotTagCache {
     private List<String> hots = new ArrayList<>();
 
     /**
-     * 给无序的标签元素按从大到小排序
+     * 给无序的标签元素按其所占的权重值从大到小排序
      *
      * @param tags
      */

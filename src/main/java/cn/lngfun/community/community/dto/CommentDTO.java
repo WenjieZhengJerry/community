@@ -1,5 +1,6 @@
 package cn.lngfun.community.community.dto;
 
+import cn.lngfun.community.community.model.Like;
 import cn.lngfun.community.community.model.User;
 import lombok.Data;
 
@@ -15,4 +16,5 @@ public class CommentDTO {
     private String content;
     private Integer commentCount;
     private User user;
+    private boolean liked = false;
 }

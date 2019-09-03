@@ -4,6 +4,7 @@ import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +31,30 @@ public class UserService {
             user.setGmtModified(user.getGmtCreate());
             userMapper.insert(user);
         } else {
-            //更新
-            dbUser.setAvatarUrl(user.getAvatarUrl());
-            dbUser.setName(user.getName());
+            //更新:只有数据库内字段值为空的属性需要更新
+            if (StringUtils.isBlank(dbUser.getAvatarUrl())) {
+                dbUser.setAvatarUrl(user.getAvatarUrl());
+            }
+            if (StringUtils.isBlank(dbUser.getName())) {
+                dbUser.setName(user.getName());
+            }
+            if (StringUtils.isBlank(dbUser.getEmail())) {
+                dbUser.setEmail(user.getEmail());
+            }
+            if (StringUtils.isBlank(dbUser.getBio())) {
+                dbUser.setBio(user.getBio());
+            }
+            if (StringUtils.isBlank(dbUser.getBlog())) {
+                dbUser.setBlog(user.getBlog());
+            }
+            if (StringUtils.isBlank(dbUser.getCompany())) {
+                dbUser.setCompany(user.getCompany());
+            }
+            if (StringUtils.isBlank(dbUser.getLocation())) {
+                dbUser.setLocation(user.getLocation());
+            }
+
             dbUser.setToken(user.getToken());
-            dbUser.setEmail(user.getEmail());
-            dbUser.setBio(user.getBio());
-            dbUser.setBlog(user.getBlog());
-            dbUser.setCompany(user.getCompany());
-            dbUser.setLocation(user.getLocation());
             dbUser.setGmtModified(System.currentTimeMillis());
             userMapper.update(dbUser);
         }
@@ -74,14 +90,31 @@ public class UserService {
         }
     }
 
+    /**
+     * 更新个人资料
+     *
+     * @param user
+     */
     public void updateProfile(User user) {
         userMapper.update(user);
     }
 
+    /**
+     * 通过id查找用户
+     *
+     * @param id
+     * @return
+     */
     public User findUserById(Long id) {
         return userMapper.findById(id);
     }
 
+    /**
+     * 查询邮箱是否存在
+     *
+     * @param email
+     * @return
+     */
     public boolean hasEmail(String email) {
         return userMapper.hasEmail(email);
     }

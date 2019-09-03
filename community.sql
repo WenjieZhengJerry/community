@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50720
 File Encoding         : 65001
 
-Date: 2019-08-26 17:55:44
+Date: 2019-09-03 14:27:02
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -30,7 +30,20 @@ CREATE TABLE `comment` (
   `content` text,
   `comment_count` int(10) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for like
+-- ----------------------------
+DROP TABLE IF EXISTS `like`;
+CREATE TABLE `like` (
+  `id` bigint(19) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint(19) NOT NULL,
+  `user_id` bigint(19) NOT NULL,
+  `type` int(10) NOT NULL COMMENT '给问题点赞类型为1，给评论点赞类型为2',
+  `gmt_create` bigint(19) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for notification
@@ -47,7 +60,7 @@ CREATE TABLE `notification` (
   `notifier_name` varchar(100) DEFAULT NULL,
   `outer_title` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for question
@@ -65,7 +78,7 @@ CREATE TABLE `question` (
   `like_count` int(10) DEFAULT '0',
   `tag` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
@@ -86,4 +99,4 @@ CREATE TABLE `user` (
   `blog` varchar(255) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;

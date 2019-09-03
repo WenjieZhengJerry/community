@@ -24,16 +24,23 @@ public class PublishController {
     @Autowired
     private QuestionService questionService;
 
+    /**
+     * 编辑问题
+     *
+     * @param id
+     * @param model
+     * @param request
+     * @return
+     */
     @GetMapping("/publish/{id}")
     public String edit(@PathVariable(name = "id") Long id, Model model, HttpServletRequest request) {
-        QuestionDTO question = questionService.findById(id);
-
         User user = (User) request.getSession().getAttribute("user");
         //判断登录状态
         if (user == null) {
             throw new CustomizeException(CustomizeErrorCode.NO_LOGIN);
         }
 
+        QuestionDTO question = questionService.findById(id, user);
         //判断非法id，只有基础类型能用 == 比较，封装类型统一用equals
         if (!user.getId().equals(question.getCreator())) {
             throw new CustomizeException(CustomizeErrorCode.INVALID_QUESTION_ID);
@@ -48,6 +55,13 @@ public class PublishController {
         return "publish";
     }
 
+    /**
+     * 跳转到发布页面
+     *
+     * @param model
+     * @param request
+     * @return
+     */
     @GetMapping("/publish")
     public String publish(Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -59,6 +73,17 @@ public class PublishController {
         return "publish";
     }
 
+    /**
+     * 发布或编辑后保存问题
+     *
+     * @param title
+     * @param description
+     * @param tag
+     * @param id
+     * @param request
+     * @param model
+     * @return
+     */
     @PostMapping("/publish")
     public String doPublish(@RequestParam(value = "title", required = false) String title,
                             @RequestParam(value = "description", required = false) String description,
@@ -105,6 +130,10 @@ public class PublishController {
         question.setId(id);
 
         questionService.createOrUpdate(question);
+
+        model.addAttribute("title", null);
+        model.addAttribute("description", null);
+        model.addAttribute("tag", null);
         return "redirect:/";
     }
 }

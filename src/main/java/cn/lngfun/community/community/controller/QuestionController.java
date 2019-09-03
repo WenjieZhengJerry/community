@@ -26,10 +26,10 @@ public class QuestionController {
     private CommentService commentService;
 
     @GetMapping("/question/{id}")
-    public String question (@PathVariable(name = "id") Long id, Model model) {
-        QuestionDTO questionDTO = questionService.findById(id);
+    public String question (@PathVariable(name = "id") Long id, Model model,HttpServletRequest request) {
+        QuestionDTO questionDTO = questionService.findById(id, (User) request.getSession().getAttribute("user"));
         List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
-        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
+        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION, (User) request.getSession().getAttribute("user"));
         //浏览量加1
         questionService.incView(id);
         model.addAttribute("question", questionDTO);
