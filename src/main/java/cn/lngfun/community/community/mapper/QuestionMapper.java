@@ -20,7 +20,7 @@ public interface QuestionMapper {
     Integer count();
 
     //通过搜索条件列出一页问题
-    @Select("select * from question where title regexp #{search} order by gmt_modified DESC limit #{offset},#{size}")
+    @Select("select * from question where title regexp #{search} or  order by gmt_modified DESC limit #{offset},#{size}")
     List<Question> listBySearch(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "search") String search);
 
     //计算所有符合搜索条件的问题总数

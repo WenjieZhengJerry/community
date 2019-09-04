@@ -37,8 +37,9 @@
                         <ul class="dropdown-menu">
                             <li><a href="/profile/questions">我的提问</a></li>
                             <li><a href="/profile/information">我的资料</a></li>
+                            <li><a href="/profile/follows">我的关注</a></li>
                             <li><a href="/profile/setting">设置</a></li>
-                            <li><a href="/logout">退出登录</a></li>
+                            <li style="border-top: 1px solid #ccc;"><a href="/logout">退出登录</a></li>
                         </ul>
                     </li>
                     <li th:if="${session.user == null}">

@@ -16,7 +16,7 @@
 <div th:insert="navigation :: nav"></div>
 <div class="container-fluid main profile">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 profile-left-div">
             <!--标题-->
             <h2><span th:text="${sectionName}"></span></h2>
             <hr>
@@ -56,7 +56,7 @@
                 <div class="media" th:each="notification : ${pagingDTO.data}">
                     <div class="media-body">
                         <p class="media-heading">
-                            <span th:text="${notification.notifierName}"></span>
+                            <a th:href="@{'/people?id='+${notification.notifier}}" th:text="${notification.notifierName}"></a>
                             <span th:text="${notification.typeName}"></span>
                             <a th:href="@{'/notification/'+${notification.id}}" th:text="${notification.outerTitle}"></a>
                             <span class="label label-danger" th:if="${notification.status == 0}">未读</span>
@@ -100,6 +100,18 @@
                             </form>
                         </div>
                     </div>
+                </div>
+            </div>
+            <!--我的关注-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'follows'}">
+                <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 follow-box-div" th:each="follow : ${follows}">
+                    <a th:href="@{'/people?id='+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}" class="img-circle follow-img"></a>
+                    <a th:href="@{'/people?id='+${follow.user.id}}"><span th:text="${follow.user.name}"></span></a>
+                    <hr>
+                    <span><span th:text="${follow.questionCount}" class="follow-span"></span> 提问</span>&nbsp;&nbsp;
+                    <span><span th:text="${follow.followerCount}" class="follow-span"></span> 粉丝</span>
+                    <button type="button" class="btn btn-danger people-follow-btn" th:id="${'follow-btn-' + follow.user.id}"
+                            onclick="follow(this)" th:data-id="${follow.user.id}">取消关注</button>
                 </div>
             </div>
             <!--设置-->
@@ -180,7 +192,7 @@
             </div>
         </div>
         <!--右边Tab-->
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 profile-right-div">
             <div class="list-group section">
                 <a href="/profile/questions"
                    th:class="${section == 'questions'} ? 'active list-group-item' : 'list-group-item'">
@@ -194,6 +206,10 @@
                 <a href="/profile/information"
                    th:class="${section == 'information'} ? 'active list-group-item' : 'list-group-item'">
                     <span class="glyphicon glyphicon-user"></span> 我的资料
+                </a>
+                <a href="/profile/follows"
+                   th:class="${section == 'follows'} ? 'active list-group-item' : 'list-group-item'">
+                    <span class="glyphicon glyphicon-star"></span> 我的关注
                 </a>
                 <a href="/profile/setting"
                    th:class="${section == 'setting'} ? 'active list-group-item' : 'list-group-item'">

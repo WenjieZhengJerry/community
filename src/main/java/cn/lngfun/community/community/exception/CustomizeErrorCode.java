@@ -24,7 +24,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     EMAIL_SEND_FAIL(2020, "验证码发送失败，请稍后再试"),
     AUTH_CODE_INVALID(2021, "验证码过期，请重新获取"),
     AUTH_CODE_WRONG(2022, "验证码错误，请重新输入"),
-    EMAIL_IS_EXIST(2023, "这个邮箱已经被别的兄弟绑定了，再选一个吧");
+    EMAIL_IS_EXIST(2023, "这个邮箱已经被别的兄弟绑定了，再选一个吧"),
+    FOLLOW_IS_EXIST(2024, "你已经关注过Ta了");
 
     private String message;
     private Integer code;

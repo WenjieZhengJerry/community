@@ -400,3 +400,48 @@ function sendAuthCode(action, obj) {
         }
     });
 }
+
+function follow(e) {
+    var userId = e.getAttribute("data-id");
+    var type;
+    if ($("#follow-btn-" + userId).html() == "关注Ta") {
+        type = "follow";
+    } else {
+        type = "unfollow";
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/follow?id=" + userId + "&type=" + type,
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                if (type == "follow") {
+                    $("#follow-btn-" + userId).attr("class", "btn btn-danger people-follow-btn");
+                    $("#follow-btn-" + userId).html("取消关注");
+                } else {
+                    $("#follow-btn-" + userId).attr("class", "btn btn-primary people-follow-btn");
+                    $("#follow-btn-" + userId).html("关注Ta");
+                }
+            } else {
+                alert(response.message);
+            }
+        }
+    });
+}
+//
+// function unfollow() {
+//     $.ajax({
+//         type: "post",
+//         url: "/follow?id=" + $("#user-id").val() + "&type=unfollow",
+//         dataType: "json",
+//         success: function (response) {
+//             if (response.code == 200) {
+//                 $("#unfollow-btn").addClass("hidden");
+//                 $("#follow-btn").removeClass("hidden");
+//             } else {
+//                 alert(response.message);
+//             }
+//         }
+//     });
+// }

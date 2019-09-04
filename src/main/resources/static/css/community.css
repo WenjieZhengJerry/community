@@ -11,6 +11,11 @@ body {
 
 .index-div {
     margin-top: 25px;
+    padding: 15px 0 50px 70px;
+}
+
+.index-hotIssue-div {
+    padding-top: 50px;
 }
 
 .btn-publish {
@@ -35,6 +40,15 @@ body {
 
 .profile .section {
     margin-top: 15px;
+}
+
+.profile-left-div {
+    padding: 30px 0px 50px 70px;
+}
+
+.profile-right-div {
+    padding-top: 50px;
+    padding-right: 30px;
 }
 
 .community-menu {
@@ -158,19 +172,22 @@ body {
 }
 
 .people-left-div {
-    padding-left: 110px;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 50px 80px 50px 80px;
 }
 
 .people-img {
-    width: 150px;
-    height: 150px;
+    width: 100%;
+    height: 100%;
 }
 
 .people-info {
     margin-top: 0px;
     margin-bottom: 7px;
+}
+
+.people-follow-btn {
+    width: 100%;
+    margin-top: 15px;
 }
 
 .setting-form {
@@ -198,4 +215,23 @@ body {
 
 .hotTag a {
     text-decoration: none;
+}
+
+.follow-box-div {
+    border-radius: 10%;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin: 15px;
+    padding-bottom: 15px;
+}
+
+.follow-img {
+    width: 50%;
+    height: 50%;
+    display: block;
+    margin: 35px;
+}
+
+.follow-span {
+    color: #337ab7;
 }

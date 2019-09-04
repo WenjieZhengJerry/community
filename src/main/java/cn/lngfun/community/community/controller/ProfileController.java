@@ -1,5 +1,6 @@
 package cn.lngfun.community.community.controller;
 
+import cn.lngfun.community.community.dto.FollowDTO;
 import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
@@ -7,9 +8,11 @@ import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.EmailProvider;
+import cn.lngfun.community.community.service.FollowService;
 import cn.lngfun.community.community.service.NotificationService;
 import cn.lngfun.community.community.service.QuestionService;
 import cn.lngfun.community.community.service.UserService;
+import com.sun.org.apache.xpath.internal.objects.XNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -36,6 +40,9 @@ public class ProfileController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FollowService followService;
 
     /**
      * 跳转到个人空间
@@ -73,6 +80,12 @@ public class ProfileController {
         } else if ("information".equals(action)) {
             model.addAttribute("section", "information");
             model.addAttribute("sectionName", "我的资料");
+        }else if ("follows".equals(action)) {
+            model.addAttribute("section", "follows");
+            model.addAttribute("sectionName", "我的关注");
+
+            List<FollowDTO> follows = followService.list(user.getId());
+            model.addAttribute("follows", follows);
         } else if ("setting".equals(action)) {
             model.addAttribute("section", "setting");
             model.addAttribute("sectionName", "设置");
@@ -145,7 +158,8 @@ public class ProfileController {
         //把密码去掉
         user.setPassword(null);
         //判断点击的人是否为登录后的自己
-        if (user.equals(request.getSession().getAttribute("user"))) {
+        User currentUser = (User) request.getSession().getAttribute("user");
+        if (user.equals(currentUser)) {
             model.addAttribute("section", "questions");
             model.addAttribute("sectionName", "我的提问");
 
@@ -156,6 +170,10 @@ public class ProfileController {
         }
 
         PagingDTO questions = questionService.list(id, page, size);
+        if (followService.isFollowed(id, currentUser.getId()) != null) {
+            //判断是否关注
+            model.addAttribute("isFollowed", true);
+        }
         model.addAttribute("user", user);
         model.addAttribute("userName", user.getName());
         model.addAttribute("pagingDTO", questions);

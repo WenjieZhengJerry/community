@@ -7,6 +7,7 @@ import cn.lngfun.community.community.enums.CommentTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.service.CommentService;
+import cn.lngfun.community.community.service.FollowService;
 import cn.lngfun.community.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,13 +26,21 @@ public class QuestionController {
     @Autowired
     private CommentService commentService;
 
+    @Autowired
+    private FollowService followService;
+
     @GetMapping("/question/{id}")
     public String question (@PathVariable(name = "id") Long id, Model model,HttpServletRequest request) {
-        QuestionDTO questionDTO = questionService.findById(id, (User) request.getSession().getAttribute("user"));
+        User currentUser = (User) request.getSession().getAttribute("user");
+        QuestionDTO questionDTO = questionService.findById(id, currentUser);
         List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION, (User) request.getSession().getAttribute("user"));
         //浏览量加1
         questionService.incView(id);
+        if (followService.isFollowed(questionDTO.getCreator(), currentUser.getId()) != null) {
+            //判断是否关注
+            model.addAttribute("isFollowed", true);
+        }
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
         model.addAttribute("relatedQuestions", relatedQuestions);

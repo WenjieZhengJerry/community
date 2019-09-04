@@ -18,7 +18,6 @@
     <div class="row">
         <!--左边个人资料-->
         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 people-left-div">
-
             <img class="media-object people-img" th:src="${user.avatarUrl}"><br>
 
             <h5 class="people-info">昵称：<span th:text="${user.name}"></span></h5>
@@ -27,6 +26,10 @@
             <h5 class="people-info">公司：<span th:text="${user.company}"></span></h5>
             <h5 class="people-info">邮箱：<span th:text="${user.email}"></span></h5>
             <h5 class="people-info">博客：<a th:text="${user.blog}" th:href="${user.blog}"></a></h5>
+
+            <button type="button" th:id="${'follow-btn-' + user.id}" onclick="follow(this)" th:data-id="${user.id}"
+                    th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"
+                    th:text="${isFollowed != true ? '关注Ta' : '取消关注'}"></button>
         </div>
         <!--右边的提问-->
         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
@@ -64,11 +67,13 @@
                             </a>
                         </li>
                         <li th:if="${pagingDTO.showPrevious}">
-                            <a th:href="@{/people/(page=${pagingDTO.currentPage - 1},id=${user.id})}" aria-label="Previous">
+                            <a th:href="@{/people/(page=${pagingDTO.currentPage - 1},id=${user.id})}"
+                               aria-label="Previous">
                                 <span aria-hidden="true">&lt;</span>
                             </a>
                         </li>
-                        <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
+                        <li th:each="page : ${pagingDTO.pages}"
+                            th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
                             <a th:text="${page}" th:href="@{/people/(page=${page},id=${user.id})}"></a>
                         </li>
                         <li th:if="${pagingDTO.showNext}">

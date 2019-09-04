@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>零分社区</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="/css/community.css"/>
 
@@ -23,7 +23,9 @@
 </head>
 
 <body>
+<!--头部导航-->
 <div th:insert="navigation :: nav"></div>
+<!--内容-->
 <div class="container-fluid main">
     <div class="row">
         <!--左边信息块-->
@@ -42,8 +44,10 @@
                         <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
                     </h4>
                     <br>
-                    <span class="text-description"><span th:text="${question.user.name}"></span> • <span th:text="${question.commentCount}"></span> 个回复 •
-                        <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span></span>
+                    <span class="text-description"><span th:text="${question.user.name}"></span> • <span
+                            th:text="${question.commentCount}"></span> 个回复 •
+                        <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span
+                                th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span></span>
                 </div>
                 <hr>
             </div>
@@ -56,7 +60,8 @@
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showPrevious}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search},tag=${tag})}" aria-label="Previous">
+                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search},tag=${tag})}"
+                           aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
@@ -64,7 +69,8 @@
                         <a th:text="${page}" th:href="@{/(page=${page},search=${search},tag=${tag})}"></a>
                     </li>
                     <li th:if="${pagingDTO.showNext}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search},tag=${tag})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search},tag=${tag})}"
+                           aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
@@ -78,12 +84,15 @@
         </div>
         <!--右边信息块-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-div">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-hotIssue-div">
                 <h4><span class="glyphicon glyphicon-fire"></span> 热门话题</h4>
                 <ul class="question-related">
                     <li th:each="hotIssue : ${hotIssues}">
-                        <a th:href="@{'/question/'+${hotIssue.id}}" th:text="${#strings.length(hotIssue.title) <= 11 ? hotIssue.title : #strings.substring(hotIssue.title,0,11) + '...'}" th:title="${hotIssue.title}"></a>
-                        <span class="pull-right hotIssue-comment-count" th:text="${hotIssue.commentCount + '个回复'}"></span>
+                        <a th:href="@{'/question/'+${hotIssue.id}}"
+                           th:text="${#strings.length(hotIssue.title) <= 11 ? hotIssue.title : #strings.substring(hotIssue.title,0,11) + '...'}"
+                           th:title="${hotIssue.title}"></a>
+                        <span class="pull-right hotIssue-comment-count"
+                              th:text="${hotIssue.commentCount + '个回复'}"></span>
                     </li>
                 </ul>
             </div>
@@ -106,12 +115,12 @@
                 <h4>广告位招租</h4>
                 <img src="/images/upload/my-wechat.jpg" class="img-thumbnail">
             </div>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         </div>
     </div>
 </div>
 <!--登录模态框-->
 <div th:insert="login :: login"></div>
+<!--尾部-->
 <div th:insert="footer :: foot"></div>
 </body>
 </html>
