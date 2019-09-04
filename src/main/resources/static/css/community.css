@@ -51,6 +51,11 @@ body {
     padding-right: 30px;
 }
 
+.profile-read-btn {
+    margin-top: 23px;
+    margin-right: 15px;
+}
+
 .community-menu {
     color: #999;
     font-size: 13px;

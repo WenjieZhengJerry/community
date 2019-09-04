@@ -401,6 +401,11 @@ function sendAuthCode(action, obj) {
     });
 }
 
+/**
+ * 关注或取消关注
+ *
+ * @param e
+ */
 function follow(e) {
     var userId = e.getAttribute("data-id");
     var type;
@@ -429,19 +434,49 @@ function follow(e) {
         }
     });
 }
-//
-// function unfollow() {
-//     $.ajax({
-//         type: "post",
-//         url: "/follow?id=" + $("#user-id").val() + "&type=unfollow",
-//         dataType: "json",
-//         success: function (response) {
-//             if (response.code == 200) {
-//                 $("#unfollow-btn").addClass("hidden");
-//                 $("#follow-btn").removeClass("hidden");
-//             } else {
-//                 alert(response.message);
-//             }
-//         }
-//     });
-// }
+
+/**
+ * 设为全部已读
+ */
+function readAll() {
+    if ($("#unread").length == 0) {
+        alert("没有未读通知哦");
+        return;
+    } else {
+        $.ajax({
+            type: "post",
+            url: "/notification/readAll",
+            dataType: "json",
+            success: function (response) {
+                if (response.code == 200) {
+                    window.location.reload();
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    }
+}
+
+/**
+ * 删除全部已读
+ */
+function deleteRead() {
+    if($("#notification").length - $("#unread").length == 0) {
+        alert("没有已读通知哦");
+        return;
+    } else {
+        $.ajax({
+            type: "post",
+            url: "/notification/deleteRead",
+            dataType: "json",
+            success: function (response) {
+                if (response.code == 200) {
+                    window.location.reload();
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    }
+}

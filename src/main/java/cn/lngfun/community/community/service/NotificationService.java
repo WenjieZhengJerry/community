@@ -23,6 +23,13 @@ public class NotificationService {
     @Autowired
     private NotificationMapper notificationMapper;
 
+    /**
+     * 列出一页通知
+     * @param userId
+     * @param page
+     * @param size
+     * @return
+     */
     public PagingDTO list(Long userId, Integer page, Integer size) {
         PagingDTO<NotificationDTO> pagingDTO = new PagingDTO<>();
         Integer totalCount = notificationMapper.countByReceiverId(userId);
@@ -47,10 +54,21 @@ public class NotificationService {
         return pagingDTO;
     }
 
+    /**
+     * 获取未读通知的数量
+     * @param id
+     * @return
+     */
     public Integer getUnreadCount(Long id) {
         return notificationMapper.countByUserId(id, NotificationStatusEnum.UNREAD.getStatus());
     }
 
+    /**
+     * 设为已读
+     * @param id
+     * @param user
+     * @return
+     */
     public NotificationDTO read(Long id, User user) {
         Notification notification = notificationMapper.findById(id);
 
@@ -68,5 +86,18 @@ public class NotificationService {
         notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
 
         return notificationDTO;
+    }
+
+    /**
+     * 设为全部已读
+     * @param receiverId
+     */
+    public void readAll(Long receiverId) {
+        notificationMapper.readAll(receiverId);
+    }
+
+
+    public void deleteRead(Long receiverId) {
+        notificationMapper.deleteRead(receiverId);
     }
 }
