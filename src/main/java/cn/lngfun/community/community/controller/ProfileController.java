@@ -170,7 +170,7 @@ public class ProfileController {
         }
 
         PagingDTO questions = questionService.list(id, page, size);
-        if (followService.isFollowed(id, currentUser.getId()) != null) {
+        if (currentUser != null && followService.isFollowed(id, currentUser.getId()) != null) {
             //判断是否关注
             model.addAttribute("isFollowed", true);
         }

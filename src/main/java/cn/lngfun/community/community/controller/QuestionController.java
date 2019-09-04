@@ -37,7 +37,7 @@ public class QuestionController {
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION, (User) request.getSession().getAttribute("user"));
         //浏览量加1
         questionService.incView(id);
-        if (followService.isFollowed(questionDTO.getCreator(), currentUser.getId()) != null) {
+        if (currentUser != null && followService.isFollowed(questionDTO.getCreator(), currentUser.getId()) != null) {
             //判断是否关注
             model.addAttribute("isFollowed", true);
         }
