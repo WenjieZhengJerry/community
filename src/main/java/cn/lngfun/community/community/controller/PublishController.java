@@ -108,6 +108,10 @@ public class PublishController {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
+        if (StringUtils.split(tag, ",").length > 5) {
+            model.addAttribute("error", "标签数量不得大于5个");
+            return "publish";
+        }
 
         String invalid = TagCache.filterInvalid(tag);
         if (StringUtils.isNoneBlank(invalid)) {

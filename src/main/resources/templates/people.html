@@ -25,7 +25,7 @@
             <h5 class="people-info">位置：<span th:text="${user.location}"></span></h5>
             <h5 class="people-info">公司：<span th:text="${user.company}"></span></h5>
             <h5 class="people-info">邮箱：<span th:text="${user.email}"></span></h5>
-            <h5 class="people-info">博客：<a th:text="${user.blog}" th:href="${user.blog}"></a></h5>
+            <h5 class="people-info">博客：<a th:text="${#strings.length(user.blog) <= 24 ? user.blog : #strings.substring(user.blog,0,24) + '...'}" th:href="${user.blog}"></a></h5>
 
             <button type="button" th:id="${'follow-btn-' + user.id}" onclick="follow(this)" th:data-id="${user.id}"
                     th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"

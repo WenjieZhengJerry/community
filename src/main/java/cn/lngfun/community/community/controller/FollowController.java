@@ -30,6 +30,10 @@ public class FollowController {
 
         if ("follow".equals(type)) {
             //关注
+            if (userId.equals(user.getId())) {
+                //不能关注自己
+                return ResultDTO.errorOf(CustomizeErrorCode.INVALID_FOLLOW);
+            }
             return followService.follow(userId, user.getId());
         } else {
             //取消关注

@@ -161,11 +161,21 @@
                         </h5>
                     </div>
                     <ul class="question-user-info">
-                        <li th:if="${question.user.bio != null && question.user.bio != ''}"><span class="glyphicon glyphicon-book"></span>&nbsp;&nbsp;<span th:text="${question.user.bio}"></span></li>
-                        <li th:if="${question.user.company != null && question.user.company != ''}"><span class="glyphicon glyphicon-briefcase"></span>&nbsp;&nbsp;<span th:text="${question.user.company}"></span></li>
-                        <li th:if="${question.user.location != null && question.user.location != ''}"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;&nbsp;<span th:text="${question.user.location}"></span></li>
-                        <li th:if="${question.user.email != null && question.user.email != ''}"><span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;<a th:text="${question.user.email}" th:href="@{'mailto:'+${question.user.email}}"></a></li>
-                        <li th:if="${question.user.blog != null && question.user.blog != ''}"><span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;<a th:text="${question.user.blog}" th:href="@{${question.user.blog}}"></a></li>
+                        <li th:if="${question.user.bio != null && question.user.bio != ''}">
+                            <span class="glyphicon glyphicon-book"></span>&nbsp;&nbsp;<span th:text="${question.user.bio}"></span>
+                        </li>
+                        <li th:if="${question.user.company != null && question.user.company != ''}">
+                            <span class="glyphicon glyphicon-briefcase"></span>&nbsp;&nbsp;<span th:text="${question.user.company}"></span>
+                        </li>
+                        <li th:if="${question.user.location != null && question.user.location != ''}">
+                            <span class="glyphicon glyphicon-map-marker"></span>&nbsp;&nbsp;<span th:text="${question.user.location}"></span>
+                        </li>
+                        <li th:if="${question.user.email != null && question.user.email != ''}">
+                            <span class="glyphicon glyphicon-envelope"></span>&nbsp;&nbsp;<a th:text="${question.user.email}" th:href="@{'mailto:'+${question.user.email}}"></a>
+                        </li>
+                        <li th:if="${question.user.blog != null && question.user.blog != ''}">
+                            <span class="glyphicon glyphicon-link"></span>&nbsp;&nbsp;<a th:text="${#strings.length(question.user.blog) <= 27 ? question.user.blog : #strings.substring(question.user.blog,0,27) + '...'}" th:href="@{${question.user.blog}}"></a>
+                        </li>
                     </ul>
                     <button type="button" th:id="${'follow-btn-' + question.user.id}" onclick="follow(this)" th:data-id="${question.user.id}"
                             th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"
