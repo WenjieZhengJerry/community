@@ -14,6 +14,7 @@ public class PagingDTO<T> {
     private boolean showEndPage;
     private Integer currentPage;
     private Integer totalPage;
+    private Integer totalCount;
     private List<Integer> pages = new ArrayList<>();
 
     public void setPaging(Integer totalPage, Integer page) {
@@ -56,7 +57,7 @@ public class PagingDTO<T> {
         }
     }
 
-    public Integer calculateOffset(Integer totalCount, Integer page, Integer size) {
+    public Integer calculateOffset(Integer page, Integer size) {
         //计算totalPage
         Integer totalPage = totalCount % size == 0 ? totalCount / size : totalCount / size + 1;
 

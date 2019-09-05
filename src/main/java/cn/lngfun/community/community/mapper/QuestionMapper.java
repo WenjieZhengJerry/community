@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface QuestionMapper {
     //添加问题
-    @Insert("insert into question (title,description,gmt_create,gmt_modified,creator,tag) values (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
+    @Insert("insert into question (title,description,gmt_create,gmt_modified,creator,tag,category_type) values (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag},#{categoryType})")
     void insert(Question question);
 
     //列出一页问题
@@ -40,7 +40,7 @@ public interface QuestionMapper {
     Question findById(@Param(value = "id") Long id);
 
     //更新问题
-    @Update("update question set title = #{title}, description = #{description}, gmt_modified = #{gmtModified}, tag = #{tag} where id = #{id}")
+    @Update("update question set title = #{title}, description = #{description}, gmt_modified = #{gmtModified}, tag = #{tag}, category_type = #{categoryType} where id = #{id}")
     int update(Question question);
 
     //增加问题的浏览量
@@ -82,4 +82,12 @@ public interface QuestionMapper {
     //给问题取消点赞
     @Update("update question set like_count = like_count - 1 where id = #{id}")
     void dislikeComment(@Param(value = "id") Long id);
+
+    //计算所有符合该分类的问题总数
+    @Select("select count(1) from question where category_type = #{categoryType}")
+    Integer countByCategory(@Param(value = "categoryType") Integer categoryType);
+
+    //通过分类列出一页问题
+    @Select("select * from question where category_type = #{categoryType} order by gmt_modified DESC limit #{offset},#{size}")
+    List<Question> listByCategory(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "categoryType") Integer categoryType);
 }

@@ -480,3 +480,11 @@ function deleteRead() {
         });
     }
 }
+
+// function chooseCategory(e) {
+//     for (var i = 0; i <= 5; i++) {
+//         $("#category").children('li').eq(i).removeClass();
+//     }
+//     var id = $("#selectedCategoryType").val();
+//     $("#category-" + id).attr("class", "active");
+// }

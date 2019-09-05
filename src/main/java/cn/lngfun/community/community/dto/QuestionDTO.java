@@ -15,6 +15,7 @@ public class QuestionDTO {
     private Integer commentCount;
     private Integer viewCount;
     private Integer likeCount;
+    private Integer categoryType;
     private User user;
     private boolean liked = false;
 }

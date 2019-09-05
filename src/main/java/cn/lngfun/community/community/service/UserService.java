@@ -1,7 +1,10 @@
 package cn.lngfun.community.community.service;
 
+import cn.lngfun.community.community.dto.FollowDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
+import cn.lngfun.community.community.mapper.FollowMapper;
+import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
 import org.apache.commons.lang3.StringUtils;
@@ -10,12 +13,20 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
+
+    @Autowired
+    private FollowMapper followMapper;
 
     /**
      * 第三方登录
@@ -126,5 +137,25 @@ public class UserService {
      */
     public void updatePassword(User user) {
         userMapper.updatePassword(user);
+    }
+
+    public List<FollowDTO> selectNewUser() {
+        List<FollowDTO> newUsersDTO = new ArrayList<>();
+        int offset = 0;
+        int size = 5;
+        List<User> newUsers = userMapper.findNewUsers(offset, size);
+
+        for (User newUser : newUsers) {
+            FollowDTO followDTO = new FollowDTO();
+            Integer questionCount = questionMapper.countByUserId(newUser.getId());
+            Integer followerCount = followMapper.countFollowerById(newUser.getId());
+            newUser.setPassword(null);
+            followDTO.setUser(newUser);
+            followDTO.setQuestionCount(questionCount);
+            followDTO.setFollowerCount(followerCount);
+            newUsersDTO.add(followDTO);
+        }
+
+        return newUsersDTO;
     }
 }

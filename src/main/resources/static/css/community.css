@@ -1,21 +1,77 @@
 body {
-    background-color: #efefef;
+    background-image: url("/images/upload/bg.jpg");
 }
 
 .main {
     background-color: white;
-    margin-top: 50px;
     margin-left: 200px;
     margin-right: 200px;
 }
 
-.index-div {
+.index-left-div {
     margin-top: 25px;
-    padding: 15px 0 50px 70px;
+    padding: 15px 0 100px 70px;
+}
+
+.index-right-div {
+    padding-bottom: 100px;
 }
 
 .index-hotIssue-div {
     padding-top: 50px;
+}
+
+.category {
+    margin-top: 25px;
+    margin-bottom: 20px;
+    padding-left: 25px;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category .list > li {
+    float: left;
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 10px 10px 0;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.category .list > li.active {
+    background: #494a4b;
+    color: white;
+}
+
+.category .list li:hover {
+    background-color: #303030 !important;
+}
+
+.category .list > li > a {
+    display: block;
+    padding: 0 10px;
+    color: #17344A;
+}
+
+.category .list > li > a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+.category .list > li.active > a, .category .list > li:hover > a {
+    color: white;
+}
+
+.page-nav-span {
+    color: #999;
+    font-size: 12px;
 }
 
 .btn-publish {
@@ -63,7 +119,9 @@ body {
 }
 
 .jumbotron {
-    margin-left: 200px;
+    margin-left: 180px;
+    margin-right: 180px;
+    background-image: url(/images/upload/bg.jpg);
 }
 
 .comment {
@@ -214,12 +272,27 @@ body {
     color: #a0a0a0;
 }
 
-.hotTag {
-    line-height: 25px;
+.hot-tag-div {
+    padding: 5px 0;
 }
 
-.hotTag a {
+.hot-tag {
+    display: inline-block;
+    line-height: 28px;
+    padding: 0 8px;
+    white-space: nowrap;
+    background: #cbdbfb;
+    color: #265899;
+    margin: 0 8px 14px 0;
+    font-size: 14px;
+}
+
+.hot-tag a {
     text-decoration: none;
+}
+
+.hot-tag a:hover {
+    color: #1abc9c;
 }
 
 .follow-box-div {
@@ -239,4 +312,23 @@ body {
 
 .follow-span {
     color: #337ab7;
+}
+
+.nav-div {
+    padding-left: 200px;
+    padding-right: 190px;
+}
+
+.new-user-box {
+    font-size: 12px;
+}
+
+.new-user-img {
+    width: 30px;
+    height: 30px;
+}
+
+.new-user-span {
+    color: #999;
+    padding-left: 35px;
 }

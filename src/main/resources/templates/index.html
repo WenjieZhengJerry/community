@@ -25,14 +25,29 @@
 <body>
 <!--头部导航-->
 <div th:insert="navigation :: nav"></div>
+<!--分类导航-->
+<div class="container category">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <ul class="list" id="category">
+                <li th:class="${categoryType == 0 || categoryType == null ? 'active' : ''}"><a href="/?categoryType=0">全部</a></li>
+                <li th:class="${categoryType == 1 ? 'active' : ''}"><a href="/?categoryType=1">提问</a></li>
+                <li th:class="${categoryType == 2 ? 'active' : ''}"><a href="/?categoryType=2">讨论</a></li>
+                <li th:class="${categoryType == 3 ? 'active' : ''}"><a href="/?categoryType=3">分享</a></li>
+                <li th:class="${categoryType == 4 ? 'active' : ''}"><a href="/?categoryType=4">建议</a></li>
+                <li th:class="${categoryType == 5 ? 'active' : ''}"><a href="/?categoryType=5">Bug</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 <!--内容-->
 <div class="container-fluid main">
     <div class="row">
         <!--左边信息块-->
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 index-div">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12 index-left-div">
             <h2><span class="glyphicon glyphicon-search" aria-hidden="true"></span> 发现</h2>
             <hr>
-
+            <!--问题列表-->
             <div class="media" th:each="question : ${pagingDTO.data}">
                 <div class="media-left">
                     <a th:href="@{/people(id=${question.user.id})}">
@@ -52,30 +67,33 @@
                 <hr>
             </div>
             <!--分页栏-->
-            <nav aria-label="Page navigation" style="float: right;">
+            <span class="pull-left page-nav-span">
+                当前第<span th:text="${pagingDTO.currentPage}"></span>页，共<span th:text="${pagingDTO.totalPage}"></span>页，共<span th:text="${pagingDTO.totalCount}"></span>条记录
+            </span>
+            <nav aria-label="Page navigation" class="pull-right">
                 <ul class="pagination">
                     <li th:if="${pagingDTO.showFirstPage}">
-                        <a th:href="@{/(page=1,search=${search},tag=${tag})}" aria-label="Previous">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag},categoryType=${categoryType})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;&lt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showPrevious}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search},tag=${tag})}"
+                        <a th:href="@{/(page=${pagingDTO.currentPage - 1},search=${search},tag=${tag},categoryType=${categoryType})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
                     <li th:each="page : ${pagingDTO.pages}" th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
-                        <a th:text="${page}" th:href="@{/(page=${page},search=${search},tag=${tag})}"></a>
+                        <a th:text="${page}" th:href="@{/(page=${page},search=${search},tag=${tag},categoryType=${categoryType})}"></a>
                     </li>
                     <li th:if="${pagingDTO.showNext}">
-                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search},tag=${tag})}"
+                        <a th:href="@{/(page=${pagingDTO.currentPage + 1},search=${search},tag=${tag},categoryType=${categoryType})}"
                            aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showEndPage}">
-                        <a th:href="@{/(page=${pagingDTO.totalPage},search=${search},tag=${tag})}" aria-label="Next">
+                        <a th:href="@{/(page=${pagingDTO.totalPage},search=${search},tag=${tag},categoryType=${categoryType})}" aria-label="Next">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>
@@ -83,7 +101,7 @@
             </nav>
         </div>
         <!--右边信息块-->
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 index-right-div">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-hotIssue-div">
                 <h4><span class="glyphicon glyphicon-fire"></span> 热门话题</h4>
                 <ul class="question-related">
@@ -99,14 +117,26 @@
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <h4><span class="glyphicon glyphicon-fire"></span> 热门标签</h4>
-                <ul class="question-related">
-                    <li class="hotTag" th:each="hotTag : ${hotTags}">
-                        <a th:href="@{/(page=1,search=${search},tag=${hotTag})}">
-                            <span class="label label-danger">
-                                <span class="glyphicon glyphicon-tag"></span>
-                                <span th:text="${hotTag}"></span>
-                            </span>
+                <div class="hot-tag-div">
+                    <div class="hot-tag" th:each="hotTag : ${hotTags}">
+                        <a th:href="@{/(page=1,search=${search},tag=${hotTag},,categoryType=0)}">
+                            <span th:text="${hotTag}"></span>
                         </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4><span class="glyphicon glyphicon-user"></span> 最新用户</h4>
+                <ul class="list-group">
+                    <li class="list-group-item new-user-box" th:each="newUser : ${newUsersDTO}">
+                        <a th:href="@{'/people?id=' + ${newUser.user.id}}">
+                            <img class="img-rounded new-user-img" th:src="${newUser.user.avatarUrl}">
+                        </a>
+                        <a th:href="@{'/people?id=' + ${newUser.user.id}}" th:text="${newUser.user.name}"></a><br>
+                        <span class="new-user-span">
+                            <span th:text="${newUser.questionCount}"></span> 提问 | <span th:text="${newUser.followerCount}"></span> 粉丝
+                        </span>
                     </li>
                 </ul>
             </div>

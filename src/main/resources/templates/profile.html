@@ -89,12 +89,24 @@
                         <div id="info-form" class="hidden">
                             <form action="/editProfile" method="post">
                                 <ul class="list-group">
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="name" placeholder="昵称" type="text" th:value="${session.user.name}"></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="bio" placeholder="签名" type="text" th:value="${session.user.bio}" ></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="location" placeholder="位置" type="text" th:value="${session.user.location}" ></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="company" placeholder="公司" type="text" th:value="${session.user.company}" ></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading">邮箱：<span th:text="${session.user.email}"></span></h4></li>
-                                    <li class="list-group-item"><h4 class="media-heading"><input class="form-control" name="blog" placeholder="博客(链接)" type="text" th:value="${session.user.blog}" ></h4></li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        <input class="form-control" name="name" placeholder="昵称" type="text" th:value="${session.user.name}"></h4>
+                                    </li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        <input class="form-control" name="bio" placeholder="签名" type="text" th:value="${session.user.bio}" ></h4>
+                                    </li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        <input class="form-control" name="location" placeholder="位置" type="text" th:value="${session.user.location}" ></h4>
+                                    </li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        <input class="form-control" name="company" placeholder="公司" type="text" th:value="${session.user.company}" ></h4>
+                                    </li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        邮箱：<span th:text="${session.user.email}"></span></h4>
+                                    </li>
+                                    <li class="list-group-item"><h4 class="media-heading">
+                                        <input class="form-control" name="blog" placeholder="博客(链接，请以http://或https://开头)" type="text" th:value="${session.user.blog}" ></h4>
+                                    </li>
                                 </ul>
                                 <button type="button" class="btn btn-default pull-right" onclick="editInformation(0)">取消</button>
                                 <button type="submit" class="btn btn-success pull-right information-save-btn">保存</button>
@@ -167,7 +179,10 @@
                     <button type="button" class="btn btn-success btn-sm pull-left profile-read-btn" onclick="readAll()">全部标为已读</button>
                     <button type="button" class="btn btn-danger btn-sm pull-left profile-read-btn" onclick="deleteRead()">删除全部已读</button>
                 </div>
-                <nav aria-label="Page navigation" style="float: right;">
+                <span class="pull-left page-nav-span" th:if="${section == 'questions'}">
+                    当前第<span th:text="${pagingDTO.currentPage}"></span>页，共<span th:text="${pagingDTO.totalPage}"></span>页，共<span th:text="${pagingDTO.totalCount}"></span>条记录
+                </span>
+                <nav aria-label="Page navigation" class="pull-right">
                     <ul class="pagination">
                         <li th:if="${pagingDTO.showFirstPage}">
                             <a th:href="@{'/profile/'+${section}(page=${1})}" aria-label="Previous">

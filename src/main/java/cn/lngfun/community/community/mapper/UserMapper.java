@@ -42,4 +42,8 @@ public interface UserMapper {
     //判断邮箱是否存在
     @Select("select * from user where email = #{email}")
     User hasEmail(@Param("email") String email);
+
+    //查找最新用户
+    @Select("select * from user order by gmt_create DESC limit #{offset}, #{size}")
+    List<User> findNewUsers(@Param("offset") int offset, @Param("size") int size);
 }

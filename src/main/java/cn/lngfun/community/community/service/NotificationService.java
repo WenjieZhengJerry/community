@@ -32,9 +32,9 @@ public class NotificationService {
      */
     public PagingDTO list(Long userId, Integer page, Integer size) {
         PagingDTO<NotificationDTO> pagingDTO = new PagingDTO<>();
-        Integer totalCount = notificationMapper.countByReceiverId(userId);
+        pagingDTO.setTotalCount(notificationMapper.countByReceiverId(userId));
         //计算从第几页开始
-        Integer offset = pagingDTO.calculateOffset(totalCount, page, size);
+        Integer offset = pagingDTO.calculateOffset(page, size);
         //获取这一页的所有通知
         List<Notification> notifications = notificationMapper.listByReceiverId(userId, offset, size);
         if (notifications.size() == 0) {

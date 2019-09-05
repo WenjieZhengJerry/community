@@ -41,21 +41,29 @@ public class QuestionService {
     private LikeMapper likeMapper;
 
 
-    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer totalCount, Integer page, Integer size, Long userId, String search, String tag) {
+    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer page, Integer size, Long userId, String search, String tag, Integer categoryType) {
         //计算从第几页开始
-        Integer offset = pagingDTO.calculateOffset(totalCount, page, size);
+        Integer offset = pagingDTO.calculateOffset(page, size);
         //获取这一页的所有问题
         List<Question> questions;
-        if (StringUtils.isBlank(search)) {
-            //无搜索条件
-            if (StringUtils.isBlank(tag)) {
-                //无标签条件
-                questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
-            } else {
-                questions = questionMapper.listByTag(offset, size, tag);
-            }
-        } else {
+        if (StringUtils.isNotBlank(search)) {
             questions = questionMapper.listBySearch(offset, size, search);
+        } else {
+            //无搜索条件
+            if (StringUtils.isNotBlank(tag)) {
+                //有标签条件
+                questions = questionMapper.listByTag(offset, size, tag);
+            } else if(categoryType != null) {
+                //有分类条件
+                if (categoryType == 0) {
+                    questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
+                } else {
+                    questions = questionMapper.listByCategory(offset, size, categoryType);
+                }
+            } else {
+                //正常无条件
+                questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
+            }
         }
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
@@ -78,23 +86,33 @@ public class QuestionService {
      * @param size
      * @return
      */
-    public PagingDTO list(Integer page, Integer size, String search, String tag) {
+    public PagingDTO list(Integer page, Integer size, String search, String tag, Integer categoryType) {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
         //计算问题总数
-        Integer totalCount;
-        if (StringUtils.isBlank(search)) {
-            //无搜索条件
-            if (StringUtils.isBlank(tag)) {
-                //无标签条件
-                totalCount = questionMapper.count();
-            } else {
-                totalCount = questionMapper.countByTag(tag);
-            }
+        if (StringUtils.isNotBlank(search)) {
+            //有搜索条件
+            pagingDTO.setTotalCount(questionMapper.countBySearch(search));
         } else {
-            totalCount = questionMapper.countBySearch(search);
+            //无搜索条件
+            if (StringUtils.isNotBlank(tag)) {
+                //有标签条件
+                pagingDTO.setTotalCount(questionMapper.countByTag(tag));
+            } else if (categoryType != null) {
+                //有分类条件
+                if (categoryType == 0) {
+                    //按全部计数
+                    pagingDTO.setTotalCount(questionMapper.count());
+                } else {
+                    //按分类计数
+                    pagingDTO.setTotalCount(questionMapper.countByCategory(categoryType));
+                }
+            } else {
+                //正常无条件
+                pagingDTO.setTotalCount(questionMapper.count());
+            }
         }
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, null, search, tag));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, page, size, null, search, tag, categoryType));//装填页面数据
 
         return pagingDTO;
     }
@@ -109,13 +127,20 @@ public class QuestionService {
      */
     public PagingDTO list(Long userId, Integer page, Integer size) {
         PagingDTO<QuestionDTO> pagingDTO = new PagingDTO<>();
-        Integer totalCount = questionMapper.countByUserId(userId);
+        pagingDTO.setTotalCount(questionMapper.countByUserId(userId));
 
-        pagingDTO.setData(selectQuestions(pagingDTO, totalCount, page, size, userId, null, null));//装填页面数据
+        pagingDTO.setData(selectQuestions(pagingDTO, page, size, userId, null, null, null));//装填页面数据
 
         return pagingDTO;
     }
 
+    /**
+     * 通过问题id查找问题
+     *
+     * @param id
+     * @param user
+     * @return
+     */
     public QuestionDTO findById(Long id, User user) {
         Question question = questionMapper.findById(id);
         if (question == null) {
@@ -138,6 +163,11 @@ public class QuestionService {
         return questionDTO;
     }
 
+    /**
+     * 新建提问
+     *
+     * @param question
+     */
     public void createOrUpdate(Question question) {
         if (question.getId() == null) {
             //创建
@@ -154,6 +184,12 @@ public class QuestionService {
         }
     }
 
+    /**
+     * 查询相关问题
+     *
+     * @param questionQueryDTO
+     * @return
+     */
     public List<QuestionDTO> selectRelated(QuestionDTO questionQueryDTO) {
         if (StringUtils.isBlank(questionQueryDTO.getTag())) {
             return new ArrayList<>();
@@ -172,14 +208,31 @@ public class QuestionService {
         return questionDTOList;
     }
 
+    /**
+     * 浏览数加一
+     *
+     * @param id
+     */
     public void incView(Long id) {
         questionMapper.incView(id);
     }
 
+    /**
+     * 查询热门话题
+     *
+     * @return
+     */
     public List<Question> selectHotIssue() {
         return questionMapper.selectHotIssue();
     }
 
+    /**
+     * 删除提问
+     *
+     * @param questionId
+     * @param userId
+     * @return
+     */
     @Transactional
     public Object deleteQuestion(Long questionId, Long userId) {
         Question question = questionMapper.findById(questionId);
@@ -199,6 +252,13 @@ public class QuestionService {
         }
     }
 
+    /**
+     * 点赞或取消点赞
+     *
+     * @param likeDTO
+     * @param userId
+     * @return
+     */
     @Transactional
     public Object likeOrDislike(LikeDTO likeDTO, Long userId) {
         if (questionMapper.findById(likeDTO.getParentId()) == null) {

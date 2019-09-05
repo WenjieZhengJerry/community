@@ -51,6 +51,7 @@ public class PublishController {
         model.addAttribute("tag", question.getTag());
         model.addAttribute("id", question.getId());
         model.addAttribute("tags", TagCache.get());
+        model.addAttribute("categoryType", question.getCategoryType());
 
         return "publish";
     }
@@ -88,6 +89,7 @@ public class PublishController {
     public String doPublish(@RequestParam(value = "title", required = false) String title,
                             @RequestParam(value = "description", required = false) String description,
                             @RequestParam(value = "tag", required = false) String tag,
+                            @RequestParam(value = "categoryType", required = false) Integer categoryType,
                             @RequestParam(value = "id", required = false) Long id,
                             HttpServletRequest request, Model model) {
         //前端参数校验
@@ -95,6 +97,7 @@ public class PublishController {
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
         model.addAttribute("tags", TagCache.get());
+        model.addAttribute("categoryType", categoryType);
 
         if (title == null || title == "" || StringUtils.isBlank(title)) {
             model.addAttribute("error", "标题不能为空");
@@ -110,6 +113,10 @@ public class PublishController {
         }
         if (StringUtils.split(tag, ",").length > 5) {
             model.addAttribute("error", "标签数量不得大于5个");
+            return "publish";
+        }
+        if (categoryType == null || categoryType < 1 || categoryType > 5) {
+            model.addAttribute("error", "分类选择错误");
             return "publish";
         }
 
@@ -130,6 +137,7 @@ public class PublishController {
         question.setTitle(title);
         question.setDescription(description);
         question.setTag(tag);
+        question.setCategoryType(categoryType);
         question.setCreator(user.getId());
         question.setId(id);
 
@@ -138,6 +146,7 @@ public class PublishController {
         model.addAttribute("title", null);
         model.addAttribute("description", null);
         model.addAttribute("tag", null);
+        model.addAttribute("categoryType", null);
         return "redirect:/";
     }
 }
