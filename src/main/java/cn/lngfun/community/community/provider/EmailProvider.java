@@ -4,15 +4,40 @@ import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.mail.SimpleEmail;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class EmailProvider {
-    private static String emailHost = "smtp.qq.com";
-    private static String emailUserEmail = "2388623483@qq.com";
-    private static String emailUserName = "2388623483";
-    private static String emailPassword = "wpustueczlbtdjci";
+    //被static修饰的变量不能直接用@Value赋值，要重载set方法
+    private static String emailHost;
+
+    @Value("${email.host}")
+    public void setEmailHost(String host) {
+        emailHost = host;
+    }
+
+    private static String emailUserEmail;
+
+    @Value("${email.user.email}")
+    public void setEmailUserEmail(String userEmail) {
+        emailUserEmail = userEmail;
+    }
+
+    private static String emailUserName;
+
+    @Value("${email.user.name}")
+    public void setEmailUserName(String userName) {
+        emailUserName = userName;
+    }
+
+    private static String emailPassword;
+
+    @Value("${email.password}")
+    public void setEmailPassword(String password) {
+        emailPassword = password;
+    }
 
     /**
      * 发送验证码到指定邮箱

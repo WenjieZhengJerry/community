@@ -80,7 +80,7 @@ public class ProfileController {
         } else if ("information".equals(action)) {
             model.addAttribute("section", "information");
             model.addAttribute("sectionName", "我的资料");
-        }else if ("follows".equals(action)) {
+        } else if ("follows".equals(action)) {
             model.addAttribute("section", "follows");
             model.addAttribute("sectionName", "我的关注");
 
@@ -196,8 +196,8 @@ public class ProfileController {
         if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
             return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_FORMAT_WRONG);
         }
-        //判断邮箱否手被绑定
-        if (userService.hasEmail(email)) {
+        //判断邮箱是否被绑定
+        if (userService.hasEmail(email) != null) {
             return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_IS_EXIST);
         }
         //判断登录状态
@@ -288,7 +288,7 @@ public class ProfileController {
         newPassword = base64en.encode(md5.digest(newPassword.getBytes("utf-8")));
         //修改密码
         user.setPassword(newPassword);
-        userService.updateProfile(user);
+        userService.updatePassword(user);
 
         return ResultDTO.okOf();
     }

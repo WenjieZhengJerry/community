@@ -115,7 +115,16 @@ public class UserService {
      * @param email
      * @return
      */
-    public boolean hasEmail(String email) {
+    public User hasEmail(String email) {
         return userMapper.hasEmail(email);
+    }
+
+    /**
+     * 更新用户密码
+     *
+     * @param user
+     */
+    public void updatePassword(User user) {
+        userMapper.updatePassword(user);
     }
 }
