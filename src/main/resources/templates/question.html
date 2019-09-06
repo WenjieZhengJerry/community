@@ -124,7 +124,7 @@
                                         <span th:text="${comment.commentCount}"></span>
                                     </span>
                                     <span th:data-id="${comment.id}" onclick="deleteComment(this)" class="comment-icon"
-                                    th:if="${session.user.id == comment.commentator}">
+                                    th:if="${session.user != null && session.user.id == comment.commentator}">
                                         <span class="glyphicon glyphicon-trash"></span>
                                     </span>
                                     <span class="pull-right"
