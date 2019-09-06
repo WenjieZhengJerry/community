@@ -29,6 +29,13 @@ public class QuestionController {
     @Autowired
     private FollowService followService;
 
+    /**
+     * 通过id访问问题
+     * @param id
+     * @param model
+     * @param request
+     * @return
+     */
     @GetMapping("/question/{id}")
     public String question (@PathVariable(name = "id") Long id, Model model,HttpServletRequest request) {
         User currentUser = (User) request.getSession().getAttribute("user");
@@ -48,6 +55,12 @@ public class QuestionController {
         return "question";
     }
 
+    /**
+     * 通过id删除问题
+     * @param questionId
+     * @param request
+     * @return
+     */
     @PostMapping("/deleteQuestion")
     @ResponseBody
     public Object deleteQuestion (@RequestParam(name = "id") Long questionId, HttpServletRequest request) {

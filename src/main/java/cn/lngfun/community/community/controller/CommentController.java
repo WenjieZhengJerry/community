@@ -22,6 +22,12 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
+    /**
+     * 添加评论
+     * @param commentCreateDTO
+     * @param request
+     * @return
+     */
     @PostMapping("/comment")
     @ResponseBody
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
@@ -49,11 +55,28 @@ public class CommentController {
         return ResultDTO.okOf();
     }
 
+    /**
+     * 获取二级评论
+     * @param id
+     * @return
+     */
     @GetMapping("/comment/{id}")
     @ResponseBody
     public ResultDTO<List> comments (@PathVariable(name = "id") Long id) {
         List<CommentDTO> commentDTOList = commentService.listByTargetId(id, CommentTypeEnum.COMMENT, null);
         return ResultDTO.okOf(commentDTOList);
+    }
+
+    @PostMapping("/comment/deleteComment")
+    @ResponseBody
+    public Object deleteComment(@RequestParam(name = "id") Long id, HttpServletRequest request) {
+        //判断是否登录
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+        }
+
+        return commentService.deleteCommentById(id, user.getId());
     }
 
 }

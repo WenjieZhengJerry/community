@@ -40,6 +40,12 @@ public class CommentService {
     @Autowired
     private LikeMapper likeMapper;
 
+    /**
+     * 添加评论
+     *
+     * @param comment
+     * @param commentator
+     */
     @Transactional
     public void insert(Comment comment, User commentator) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -82,6 +88,16 @@ public class CommentService {
         }
     }
 
+    /**
+     * 创建通知
+     *
+     * @param comment
+     * @param receiver
+     * @param notifierName
+     * @param outerTitle
+     * @param notificationType
+     * @param outerId
+     */
     public void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
         //自己回复自己的问题或评论时不需要通知
         if (receiver.equals(comment.getCommentator())) {
@@ -100,6 +116,14 @@ public class CommentService {
         notificationMapper.insert(notification);
     }
 
+    /**
+     * 列出评论
+     *
+     * @param id
+     * @param type
+     * @param user
+     * @return
+     */
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type, User user) {
         List<Comment> comments = commentMapper.findByParentId(id, type.getType());
 
@@ -140,6 +164,11 @@ public class CommentService {
         return commentDTOList;
     }
 
+    /**
+     * 通过问题id删除评论
+     *
+     * @param questionId
+     */
     @Transactional
     public void deleteCommentByParentId(Long questionId) {
         //找出这个问题的所有评论
@@ -147,18 +176,56 @@ public class CommentService {
         //找出这些评论的子评论并删除
         for (Comment parentComment : commentsFromQuestion) {
             List<Comment> commentsFromComment = commentMapper.findByParentId(parentComment.getId(), CommentTypeEnum.COMMENT.getType());
-            for (Comment childComment: commentsFromComment) {
+            for (Comment childComment : commentsFromComment) {
                 commentMapper.deleteCommentById(childComment.getId());
             }
             //删完子评论删父评论
             commentMapper.deleteCommentById(parentComment.getId());
             //删除点赞记录
             likeMapper.deleteByParentId(parentComment.getId());
-            /*//问题回复量减一
-            questionMapper.decCommentCount(questionId);*/
         }
     }
 
+    /**
+     * 通过评论id删除评论
+     *
+     * @param id
+     * @param userId
+     * @return
+     */
+    public Object deleteCommentById(Long id, Long userId) {
+        Comment comment = commentMapper.findById(id);
+
+        if (comment == null) {
+            //该评论不存在
+            return ResultDTO.errorOf(CustomizeErrorCode.COMMENT_NOT_FOUND);
+        } else if (!userId.equals(comment.getCommentator())) {
+            //判断该评论的发布者是否和当前用户一致，防止有人通过评论id直接删除别人的评论
+            return ResultDTO.errorOf(CustomizeErrorCode.DELETE_COMMENT_FAIL);
+        } else {
+            //先删子评论
+            List<Comment> commentsFromComment = commentMapper.findByParentId(comment.getId(), CommentTypeEnum.COMMENT.getType());
+            for (Comment childComment : commentsFromComment) {
+                commentMapper.deleteCommentById(childComment.getId());
+            }
+            //删完子评论删父评论
+            commentMapper.deleteCommentById(comment.getId());
+            //删除点赞记录
+            likeMapper.deleteByParentId(comment.getId());
+            //问题回复量减一
+            questionMapper.decCommentCount(comment.getParentId());
+
+            return ResultDTO.okOf();
+        }
+    }
+
+    /**
+     * 点赞或取消点赞
+     *
+     * @param likeDTO
+     * @param userId
+     * @return
+     */
     @Transactional
     public Object likeOrDislike(LikeDTO likeDTO, Long userId) {
         if (commentMapper.findById(likeDTO.getParentId()) == null) {

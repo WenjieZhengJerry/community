@@ -23,7 +23,7 @@ public interface CommentMapper {
     @Update("update comment set comment_count = comment_count + 1 where id = #{id}")
     void incCommentCount(@Param(value = "id") Long id);
 
-    //通过父id删除评论
+    //通过id删除评论
     @Delete("delete from comment where id = #{id}")
     void deleteCommentById(@Param(value = "id") Long id);
 

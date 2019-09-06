@@ -61,6 +61,29 @@ function comment2target(parentId, type, content) {
 }
 
 /**
+ * 删除评论
+ * @param e
+ */
+function deleteComment(e) {
+    if (confirm("删除评论无法复原，是否删除")) {
+        var id = e.getAttribute("data-id");
+        $.ajax({
+            type: "post",
+            url: "/comment/deleteComment?id=" + id,
+            dataType: "json",
+            success: function (response) {
+                if (response.code == 200) {
+                    $("#comment-media-" + id).attr("class", "hidden");
+                    $("#question-comment-count").html($("#question-comment-count").html() - 1);
+                } else {
+                    alert(response.message);
+                }
+            }
+        });
+    }
+}
+
+/**
  * 展示二级评论内容
  */
 function collapseComments(e) {
@@ -462,7 +485,7 @@ function readAll() {
  * 删除全部已读
  */
 function deleteRead() {
-    if($("#notification").length - $("#unread").length == 0) {
+    if ($("#notification").length - $("#unread").length == 0) {
         alert("没有已读通知哦");
         return;
     } else {
@@ -481,10 +504,3 @@ function deleteRead() {
     }
 }
 
-// function chooseCategory(e) {
-//     for (var i = 0; i <= 5; i++) {
-//         $("#category").children('li').eq(i).removeClass();
-//     }
-//     var id = $("#selectedCategoryType").val();
-//     $("#category-" + id).attr("class", "active");
-// }
