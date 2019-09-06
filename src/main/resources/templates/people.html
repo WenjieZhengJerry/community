@@ -50,6 +50,10 @@
                     </div>
                     <div class="media-body">
                         <h4 class="media-heading">
+                            <a th:href="@{/(categoryType=${question.categoryType})}">
+                            <span class="label" th:style="'background-color:'+${question.categoryColor}"
+                                  th:text="${question.categoryName}"></span>
+                            </a>
                             <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
                         </h4>
                         <br>

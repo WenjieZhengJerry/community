@@ -20,11 +20,11 @@ public interface QuestionMapper {
     Integer count();
 
     //通过搜索条件列出一页问题
-    @Select("select * from question where title regexp #{search} or  order by gmt_modified DESC limit #{offset},#{size}")
+    @Select("select * from question where title like concat('%',#{search},'%') order by gmt_modified DESC limit #{offset},#{size}")
     List<Question> listBySearch(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "search") String search);
 
     //计算所有符合搜索条件的问题总数
-    @Select("select count(1) from question where title regexp #{search}")
+    @Select("select count(1) from question where title like concat('%',#{search},'%')")
     Integer countBySearch(@Param(value = "search") String search);
 
     //通过用户id列出一页问题
@@ -68,11 +68,11 @@ public interface QuestionMapper {
     void deleteQuestion(@Param(value = "questionId") Long questionId);
 
     //计算所有符合标签的问题总数
-    @Select("select count(1) from question where tag regexp #{tag}")
+    @Select("select count(1) from question where tag like concat('%',#{tag},'%')")
     Integer countByTag(@Param(value = "tag") String tag);
 
     //通过标签列出一页问题
-    @Select("select * from question where tag regexp #{tag} order by gmt_modified DESC limit #{offset},#{size}")
+    @Select("select * from question where tag like concat('%',#{tag},'%') order by gmt_modified DESC limit #{offset},#{size}")
     List<Question> listByTag(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "tag") String tag);
 
     //给问题点赞

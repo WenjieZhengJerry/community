@@ -16,6 +16,8 @@ public class QuestionDTO {
     private Integer viewCount;
     private Integer likeCount;
     private Integer categoryType;
+    private String categoryName;
+    private String categoryColor;
     private User user;
     private boolean liked = false;
 }

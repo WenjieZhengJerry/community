@@ -1,5 +1,6 @@
 package cn.lngfun.community.community.service;
 
+import cn.lngfun.community.community.cache.CategoryCache;
 import cn.lngfun.community.community.dto.LikeDTO;
 import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.QuestionDTO;
@@ -72,6 +73,8 @@ public class QuestionService {
             User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
+            questionDTO.setCategoryName(CategoryCache.getCategoryName(questionDTO.getCategoryType()));
+            questionDTO.setCategoryColor(CategoryCache.getCategoryColor(questionDTO.getCategoryType()));
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
@@ -148,6 +151,8 @@ public class QuestionService {
         }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
+        questionDTO.setCategoryName(CategoryCache.getCategoryName(questionDTO.getCategoryType()));
+        questionDTO.setCategoryColor(CategoryCache.getCategoryColor(questionDTO.getCategoryType()));
         User dbUser = userMapper.findById(question.getCreator());
         questionDTO.setUser(dbUser);
         if (user != null) {

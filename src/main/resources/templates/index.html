@@ -56,6 +56,9 @@
                 </div>
                 <div class="media-body">
                     <h4 class="media-heading">
+                        <a th:href="@{/(categoryType=${question.categoryType})}">
+                            <span class="label" th:style="'background-color:'+${question.categoryColor}" th:text="${question.categoryName}"></span>
+                        </a>
                         <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
                     </h4>
                     <br>
@@ -140,11 +143,11 @@
                     </li>
                 </ul>
             </div>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <h4>广告位招租</h4>
-                <img src="/images/upload/my-wechat.jpg" class="img-thumbnail">
-            </div>
+<!--            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+<!--            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
+<!--                <h4>广告位招租</h4>-->
+<!--                <img src="/images/upload/my-wechat.jpg" class="img-thumbnail">-->
+<!--            </div>-->
         </div>
     </div>
 </div>
