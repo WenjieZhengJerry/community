@@ -76,9 +76,10 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'information'}">
                 <div class="media information-div">
                     <div class="media-left media-middle">
-                        <a href="javascript:void(0)">
-                            <img class="media-object information-icon" th:src="${session.user.avatarUrl}">
-                        </a>
+                        <img class="media-object information-icon" th:src="${session.user.avatarUrl}">
+                        <button class="btn btn-primary people-follow-btn" data-toggle="modal"
+                                data-target="#changeAvatar">更改头像
+                        </button>
                     </div>
                     <div class="media-body">
                         <br>
@@ -134,6 +135,34 @@
                                 <button type="submit" class="btn btn-success pull-right information-save-btn">保存
                                 </button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="changeAvatar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">更换头像 - 零分社区</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form id="change-avatar-form">
+                                    <input id="newAvatar" name="newAvatar" class="profile-avatar-input"
+                                           onchange="changepic(this)" type="file"
+                                           accept="image/png, image/jpeg, image/gif, image/jpg">
+                                    <label for="newAvatar" class="btn btn-success profile-avatar-plus"><span
+                                            class="glyphicon glyphicon-plus"></span>点击添加</label>
+                                    <br>
+                                    <div class="profile-avatar-div">
+                                        <img src="" id="show" width="100%">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="changeAvatar()" id="change-avatar-btn">更改</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
                         </div>
                     </div>
                 </div>

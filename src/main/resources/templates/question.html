@@ -51,12 +51,11 @@
                     <!--标签-->
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <span>标签：</span>
-                        <span class="label label-info question-tag" th:each="tag : ${question.tag.split(',')}">
+                        <div class="hot-tag" th:each="tag : ${question.tag.split(',')}">
                             <a th:href="@{/(page=1,search=${search},tag=${tag},,categoryType=0)}">
-                                <span class="glyphicon glyphicon-tags"></span>
-                                <span class="label label-info" th:text="${tag}"></span>
+                                <span th:text="${tag}"></span>
                             </a>
-                        </span>
+                        </div>
                     </div>
                     <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <!--编辑-->

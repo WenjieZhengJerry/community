@@ -155,6 +155,7 @@ public class QuestionService {
         questionDTO.setCategoryColor(CategoryCache.getCategoryColor(questionDTO.getCategoryType()));
         User dbUser = userMapper.findById(question.getCreator());
         questionDTO.setUser(dbUser);
+        //判断是否已点赞
         if (user != null) {
             List<Like> likes = likeMapper.findByParentId(question.getId());
             for (Like like : likes) {

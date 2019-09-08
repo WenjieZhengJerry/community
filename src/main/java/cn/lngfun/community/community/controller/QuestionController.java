@@ -5,6 +5,7 @@ import cn.lngfun.community.community.dto.QuestionDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.enums.CommentTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
+import cn.lngfun.community.community.interceptor.SessionInterceptor;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.service.CommentService;
 import cn.lngfun.community.community.service.FollowService;
@@ -30,22 +31,52 @@ public class QuestionController {
     private FollowService followService;
 
     /**
+     * 获取ip地址
+     * @param request
+     * @return
+     */
+    public String getIpAddress(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        if (ip.equals("0:0:0:0:0:0:0:1")) {
+            ip = "127.0.0.1";
+        }
+
+        return ip;
+    }
+
+    /**
      * 通过id访问问题
+     *
      * @param id
      * @param model
      * @param request
      * @return
      */
     @GetMapping("/question/{id}")
-    public String question (@PathVariable(name = "id") Long id, Model model,HttpServletRequest request) {
+    public String question(@PathVariable(name = "id") Long id, Model model, HttpServletRequest request) {
         User currentUser = (User) request.getSession().getAttribute("user");
         QuestionDTO questionDTO = questionService.findById(id, currentUser);
         List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
         List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION, (User) request.getSession().getAttribute("user"));
-        //浏览量加1
-        questionService.incView(id);
+        //判断是否为同一ip，是的话就不增加浏览量
+        String ip = getIpAddress(request);
+        if (!ip.equals(request.getSession().getAttribute("question-" + id + "-isViewed"))) {
+            //浏览量加1
+            questionService.incView(id);
+            request.getSession().setAttribute("question-" + id + "-isViewed", ip);
+        }
+        //判断是否关注了问题发布者
         if (currentUser != null && followService.isFollowed(questionDTO.getCreator(), currentUser.getId()) != null) {
-            //判断是否关注
             model.addAttribute("isFollowed", true);
         }
         model.addAttribute("question", questionDTO);
@@ -57,13 +88,14 @@ public class QuestionController {
 
     /**
      * 通过id删除问题
+     *
      * @param questionId
      * @param request
      * @return
      */
     @PostMapping("/deleteQuestion")
     @ResponseBody
-    public Object deleteQuestion (@RequestParam(name = "id") Long questionId, HttpServletRequest request) {
+    public Object deleteQuestion(@RequestParam(name = "id") Long questionId, HttpServletRequest request) {
         //判断是否登录
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
