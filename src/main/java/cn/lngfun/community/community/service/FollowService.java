@@ -8,7 +8,6 @@ import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.Follow;
 import cn.lngfun.community.community.model.User;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -106,5 +105,25 @@ public class FollowService {
      */
     public Follow isFollowed(Long userId, Long followerId) {
         return followMapper.isFollowed(userId, followerId);
+    }
+
+    /**
+     * 获取粉丝数
+     *
+     * @param id
+     * @return
+     */
+    public Integer countFollowerById(Long id) {
+        return followMapper.countFollowerById(id);
+    }
+
+    /**
+     * 获取关注数
+     *
+     * @param id
+     * @return
+     */
+    public Integer countFollowById(Long id) {
+        return followMapper.countFollowById(id);
     }
 }

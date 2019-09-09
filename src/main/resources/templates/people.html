@@ -14,89 +14,146 @@
 </head>
 <body>
 <div th:insert="navigation :: nav"></div>
-<div class="container-fluid main profile">
+<div class="container-fluid main">
     <div class="row">
-        <!--左边个人资料-->
-        <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12 people-left-div">
-            <img class="media-object people-img" th:src="${user.avatarUrl}"><br>
-
-            <h5 class="people-info">昵称：<span th:text="${user.name}"></span></h5>
-            <h5 class="people-info">签名：<span th:text="${user.bio}"></span></h5>
-            <h5 class="people-info">位置：<span th:text="${user.location}"></span></h5>
-            <h5 class="people-info">公司：<span th:text="${user.company}"></span></h5>
-            <h5 class="people-info">邮箱：<span th:text="${user.email}"></span></h5>
-            <h5 class="people-info" th:if="${user.blog != null}">
-                博客：<a th:href="${user.blog}"
-                      th:text="${#strings.length(user.blog) <= 24 ? user.blog : #strings.substring(user.blog,0,24) + '...'}"></a>
-            </h5>
-            <h5 class="people-info" th:if="${user.blog == null}">博客：</h5>
-
-            <button type="button" th:id="${'follow-btn-' + user.id}" onclick="follow(this)" th:data-id="${user.id}"
-                    th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"
-                    th:text="${isFollowed != true ? '关注Ta' : '取消关注'}"></button>
-        </div>
-        <!--右边的提问-->
-        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-            <!--标题-->
-            <h2>Ta的提问</h2>
-            <hr>
-            <!--内容-->
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="media" th:each="question : ${pagingDTO.data}">
-                    <div class="media-left">
-                        <a href="javascript:void(0)">
-                            <img class="media-object" th:src="${question.user.avatarUrl}">
-                        </a>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-top-div">
+            <div class="people-user-div">
+                <div class="people-img-div">
+                    <img class="people-img img-circle" th:src="${user.avatarUrl}">
+                </div>
+                <div class="people-user-detail-div">
+                    <div class="people-user-name">
+                        <span th:text="${user.name}"></span>
                     </div>
-                    <div class="media-body">
-                        <h4 class="media-heading">
-                            <a th:href="@{/(categoryType=${question.categoryType})}">
-                            <span class="label" th:style="'background-color:'+${question.categoryColor}"
-                                  th:text="${question.categoryName}"></span>
-                            </a>
-                            <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
-                        </h4>
+                    <div class="people-user-detail">
+                        <span th:text="${user.bio}"></span>
+                        <span th:if="${user.bio == null}">这个人很懒，什么都没有写~~</span>
                         <br>
-                        <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
-                            <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span
-                                    th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                        位置：<span th:text="${user.location}"></span><span
+                            th:if="${user.location == null || user.location == ''}">无</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        组织：<span th:text="${user.company}"></span><span
+                            th:if="${user.company == null || user.company == ''}">无</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        邮箱：<span th:text="${user.email}"></span><span th:if="${user.email == null || user.email == ''}">无</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <span class="people-info" th:if="${user.blog != null && user.blog != ''}">
+                            博客：<a th:title="${user.blog}" th:href="${user.blog}"
+                                  th:text="${#strings.length(user.blog) <= 24 ? user.blog : #strings.substring(user.blog,0,24) + '...'}"></a>
                         </span>
+                        <span class="people-info" th:if="${user.blog == null || user.blog == ''}">博客：无</span>
                     </div>
-                    <hr>
+                </div>
+                <div class="people-follow-btn-div">
+                    <button type="button" th:id="${'follow-btn-' + user.id}" onclick="follow(this)"
+                            th:data-id="${user.id}"
+                            th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"
+                            th:text="${isFollowed != true ? '关注Ta' : '取消关注'}"></button>
                 </div>
             </div>
-            <!--翻页导航栏-->
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <nav aria-label="Page navigation" style="float: right;">
-                    <ul class="pagination">
-                        <li th:if="${pagingDTO.showFirstPage}">
-                            <a th:href="@{/people/(page=${1},id=${user.id})}" aria-label="Previous">
-                                <span aria-hidden="true">&lt;&lt;</span>
-                            </a>
-                        </li>
-                        <li th:if="${pagingDTO.showPrevious}">
-                            <a th:href="@{/people/(page=${pagingDTO.currentPage - 1},id=${user.id})}"
-                               aria-label="Previous">
-                                <span aria-hidden="true">&lt;</span>
-                            </a>
-                        </li>
-                        <li th:each="page : ${pagingDTO.pages}"
-                            th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
-                            <a th:text="${page}" th:href="@{/people/(page=${page},id=${user.id})}"></a>
-                        </li>
-                        <li th:if="${pagingDTO.showNext}">
-                            <a th:href="@{/people/(page=${pagingDTO.currentPage + 1},id=${user.id})}" aria-label="Next">
-                                <span aria-hidden="true">&gt;</span>
-                            </a>
-                        </li>
-                        <li th:if="${pagingDTO.showEndPage}">
-                            <a th:href="@{/people/(page=${pagingDTO.totalPage},id=${user.id})}" aria-label="Next">
-                                <span aria-hidden="true">&gt;&gt;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+        </div>
+        <!--导航-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-middle-div">
+            <div class="people-nav-div">
+                <div class="people-nav-left-div">
+                    <a th:href="@{'/people/'+${user.id}(section='questions')}" th:class="${sectionName == '提问' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
+                        <span class="glyphicon glyphicon-list"></span>&nbsp;Ta的提问
+                    </a>
+                    <a th:href="@{'/people/'+${user.id}(section='follow')}" th:class="${sectionName == '关注' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
+                        <span class="glyphicon glyphicon-star"></span>&nbsp;Ta的关注
+                    </a>
+                    <a th:href="@{'/people/'+${user.id}(section='collection')}" th:class="${sectionName == '收藏' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
+                        <span class="glyphicon glyphicon-heart"></span>&nbsp;Ta的收藏
+                    </a>
+                </div>
+                <div class="people-nav-right-div">
+                    <div class="people-nav-right-box">
+                        <p class="people-box-title">关注数</p>
+                        <p class="people-box-title-data" th:text="${followCount}"></p>
+                    </div>
+                    <div class="people-nav-right-box">
+                        <p class="people-box-title">粉丝数</p>
+                        <p class="people-box-title-data" th:text="${followerCount}"></p>
+                    </div>
+                    <div class="people-nav-right-box">
+                        <p class="people-box-title">访客</p>
+                        <p class="people-box-title-data">123</p>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-space-div"></div>
+        <!--提问-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '提问'}">
+            <h3 th:if="${pagingDTO.data.size() == 0}" style="margin-top: 0; margin-bottom: 50px;">空空如也~</h3>
+            <div class="media" th:each="question : ${pagingDTO.data}">
+                <div class="media-left">
+                    <img class="media-object" th:src="${question.user.avatarUrl}">
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        <a th:href="@{/(categoryType=${question.categoryType})}">
+                            <span class="label" th:style="'background-color:'+${question.categoryColor}"
+                                  th:text="${question.categoryName}"></span>
+                        </a>
+                        <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
+                    </h4>
+                    <br>
+                    <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
+                            <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span
+                                th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                        </span>
+                </div>
+                <hr>
+            </div>
+        </div>
+        <!--关注-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '关注'}">
+            <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 follow-box-div" th:each="follow : ${followDTOS}">
+                <a th:href="@{'/people/'+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}"
+                                                                     class="img-circle follow-img"></a>
+                <a th:href="@{'/people/'+${follow.user.id}}"><span th:text="${follow.user.name}"></span></a>
+                <hr>
+                <span><span th:text="${follow.questionCount}" class="follow-span"></span> 提问</span>&nbsp;&nbsp;
+                <span><span th:text="${follow.followerCount}" class="follow-span"></span> 粉丝</span>
+<!--                <button type="button" class="btn btn-danger people-follow-btn"-->
+<!--                        th:id="${'follow-btn-' + follow.user.id}"-->
+<!--                        onclick="follow(this)" th:data-id="${follow.user.id}">取消关注-->
+<!--                </button>-->
+            </div>
+        </div>
+        <!--收藏-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '收藏'}">
+            <h3>待开发</h3>
+        </div>
+        <!--翻页导航栏-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-page-nav" th:if="${sectionName == '提问'}">
+            <nav aria-label="Page navigation" style="float: right;" th:if="${pagingDTO.currentPage != 0}">
+                <ul class="pagination">
+                    <li th:if="${pagingDTO.showFirstPage}">
+                        <a th:href="@{'/people/'+${user.id}(page=${1})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagingDTO.showPrevious}">
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage - 1})}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page : ${pagingDTO.pages}"
+                        th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
+                        <a th:text="${page}" th:href="@{'/people/'+${user.id}(page=${page})}"></a>
+                    </li>
+                    <li th:if="${pagingDTO.showNext}">
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage + 1})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${pagingDTO.showEndPage}">
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.totalPage})}" aria-label="Next">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

@@ -35,7 +35,7 @@ public class CommentService {
     private UserMapper userMapper;
 
     @Autowired
-    private NotificationMapper notificationMapper;
+    private NotificationService notificationService;
 
     @Autowired
     private LikeMapper likeMapper;
@@ -72,7 +72,7 @@ public class CommentService {
             //评论数加一
             commentMapper.incCommentCount(dbComment.getId());
             //添加通知
-            createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+            notificationService.createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
         } else {
             //回复问题
             Question question = questionMapper.findById(comment.getParentId());
@@ -84,36 +84,8 @@ public class CommentService {
             //评论数加一
             questionMapper.incCommentCount(question.getId());
             //添加通知
-            createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
+            notificationService.createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
         }
-    }
-
-    /**
-     * 创建通知
-     *
-     * @param comment
-     * @param receiver
-     * @param notifierName
-     * @param outerTitle
-     * @param notificationType
-     * @param outerId
-     */
-    public void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
-        //自己回复自己的问题或评论时不需要通知
-        if (receiver.equals(comment.getCommentator())) {
-            return;
-        }
-
-        Notification notification = new Notification();
-        notification.setGmtCreate(System.currentTimeMillis());
-        notification.setNotifier(comment.getCommentator());
-        notification.setOuterId(outerId);
-        notification.setReceiver(receiver);
-        notification.setType(notificationType.getType());
-        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
-        notification.setNotifierName(notifierName);
-        notification.setOuterTitle(outerTitle);
-        notificationMapper.insert(notification);
     }
 
     /**

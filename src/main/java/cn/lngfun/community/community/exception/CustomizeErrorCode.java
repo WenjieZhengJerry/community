@@ -28,7 +28,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     FOLLOW_IS_EXIST(2024, "你已经关注过Ta了"),
     INVALID_FOLLOW(2025, "不能关注自己哦"),
     DELETE_COMMENT_FAIL(2026, "大哥你怎么可以删别人的评论"),
-    CHANGE_AVATAR_FAIL(2027, "更改头像失败");
+    CHANGE_AVATAR_FAIL(2027, "更改头像失败"),
+    RESOURCE_NOT_FOUND(2028, "这个网页走丢了，试试其他的吧");
 
     private String message;
     private Integer code;

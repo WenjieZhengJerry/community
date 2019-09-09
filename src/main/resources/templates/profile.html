@@ -91,7 +91,7 @@
                                         th:text="${session.user.bio}"></span></h4></li>
                                 <li class="list-group-item"><h4 class="media-heading">位置：<span
                                         th:text="${session.user.location}"></span></h4></li>
-                                <li class="list-group-item"><h4 class="media-heading">公司：<span
+                                <li class="list-group-item"><h4 class="media-heading">组织：<span
                                         th:text="${session.user.company}"></span></h4></li>
                                 <li class="list-group-item"><h4 class="media-heading">邮箱：<span
                                         th:text="${session.user.email}"></span></h4></li>
@@ -160,7 +160,9 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" onclick="changeAvatar()" id="change-avatar-btn">更改</button>
+                                <button type="button" class="btn btn-primary" onclick="changeAvatar()"
+                                        id="change-avatar-btn">更改
+                                </button>
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
                             </div>
                         </div>
@@ -170,9 +172,9 @@
             <!--我的关注-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'follows'}">
                 <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 follow-box-div" th:each="follow : ${follows}">
-                    <a th:href="@{'/people?id='+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}"
-                                                                         class="img-circle follow-img"></a>
-                    <a th:href="@{'/people?id='+${follow.user.id}}"><span th:text="${follow.user.name}"></span></a>
+                    <a th:href="@{'/people/'+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}"
+                                                                      class="img-circle follow-img"></a>
+                    <a th:href="@{'/people/'+${follow.user.id}}"><span th:text="${follow.user.name}"></span></a>
                     <hr>
                     <span><span th:text="${follow.questionCount}" class="follow-span"></span> 提问</span>&nbsp;&nbsp;
                     <span><span th:text="${follow.followerCount}" class="follow-span"></span> 粉丝</span>

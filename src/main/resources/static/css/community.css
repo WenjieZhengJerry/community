@@ -2,10 +2,21 @@ body {
     background-image: url("/images/upload/bg.jpg");
 }
 
-a:link{text-decoration:none;}
-a:visited {text-decoration:none;}
-a:hover {text-decoration:none;}
-a:active {text-decoration:none;}
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
+}
 
 .main {
     background-color: white;
@@ -252,8 +263,21 @@ a:active {text-decoration:none;}
     display: none;
 }
 
-.people-left-div {
-    padding: 50px 80px 50px 80px;
+.people-top-div {
+    height: 200px;
+    background-image: url('/images/upload/people-backgroud.jpg');
+}
+
+.people-user-div {
+    margin-top: 80px;
+    margin-left: 20px;
+}
+
+.people-img-div {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+    float: left;
 }
 
 .people-img {
@@ -261,14 +285,102 @@ a:active {text-decoration:none;}
     height: 100%;
 }
 
-.people-info {
-    margin-top: 0px;
-    margin-bottom: 7px;
+.people-user-detail-div {
+    display: inline-block;
+    margin: 10px 0 0 20px;
+}
+
+.people-user-name {
+    font-size: 18px;
+    font-weight: 800;
+    color: white;
+}
+
+.people-user-detail {
+    margin-top: 8px;
+    color: #d6dee4;
+}
+
+.people-follow-btn-div {
+    float: right;
+    margin-top: 60px;
+    margin-right: 30px;
 }
 
 .people-follow-btn {
     width: 100%;
     margin-top: 15px;
+}
+
+.people-middle-div {
+    box-shadow: 0 0 0 1px #eee;
+    border-radius: 0 0 4px 4px;
+}
+
+.people-nav-div {
+    margin: 10px 0;
+}
+
+.people-nav-left-div {
+    margin-left: 20px;
+}
+
+.people-nav-left-box {
+    float: left;
+    line-height: 45px;
+    margin-right: 31px;
+    color: #222;
+    cursor: pointer;
+}
+
+.people-nav-left-box.active {
+    color: #00a1d6;
+    border-bottom: 2px solid;
+}
+
+.people-nav-left-box:hover {
+    color: #00a1d6;
+    border-bottom: 2px solid;
+}
+
+.people-nav-right-div {
+    float: right;
+    height: 60px;
+}
+
+.people-nav-right-box {
+    float: left;
+    width: 58px;
+    height: 66px;
+    padding: 10px 0;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.people-box-title {
+    line-height: 14px;
+    font-size: 13px;
+    color: #99a2aa;
+}
+
+.people-box-title-data {
+    line-height: 16px;
+    margin-top: 5px;
+    color: #222;
+    font-size: 12px;
+}
+
+.people-space-div {
+    height: 15px;
+    background-image: url("/images/upload/bg.jpg");
+}
+
+.people-content-div {
+    padding: 30px 30px 0 40px;
+}
+
+.people-page-nav {
+    padding-right: 30px;
 }
 
 .setting-form {

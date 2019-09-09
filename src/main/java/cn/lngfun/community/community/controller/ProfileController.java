@@ -89,6 +89,8 @@ public class ProfileController {
         } else if ("setting".equals(action)) {
             model.addAttribute("section", "setting");
             model.addAttribute("sectionName", "设置");
+        } else {
+            throw new CustomizeException(CustomizeErrorCode.RESOURCE_NOT_FOUND);
         }
 
         return "profile";
@@ -131,54 +133,6 @@ public class ProfileController {
         model.addAttribute("sectionName", "我的资料");
 
         return "profile";
-    }
-
-    /**
-     * 查看个人资料
-     *
-     * @param page
-     * @param size
-     * @param id
-     * @param model
-     * @param request
-     * @return
-     */
-    @GetMapping("/people")
-    public String people(@RequestParam(name = "page", defaultValue = "1") Integer page,
-                         @RequestParam(name = "size", defaultValue = "10") Integer size,
-                         @RequestParam(name = "id") Long id,
-                         Model model,
-                         HttpServletRequest request) {
-
-        User user = userService.findUserById(id);
-        //找不到的用户
-        if (user == null) {
-            throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
-        }
-        //把密码去掉
-        user.setPassword(null);
-        //判断点击的人是否为登录后的自己
-        User currentUser = (User) request.getSession().getAttribute("user");
-        if (user.equals(currentUser)) {
-            model.addAttribute("section", "questions");
-            model.addAttribute("sectionName", "我的提问");
-
-            PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
-            model.addAttribute("pagingDTO", pagingDTO);
-
-            return "profile";
-        }
-
-        PagingDTO questions = questionService.list(id, page, size);
-        if (currentUser != null && followService.isFollowed(id, currentUser.getId()) != null) {
-            //判断是否关注
-            model.addAttribute("isFollowed", true);
-        }
-        model.addAttribute("user", user);
-        model.addAttribute("userName", user.getName());
-        model.addAttribute("pagingDTO", questions);
-
-        return "people";
     }
 
     /**
@@ -244,6 +198,71 @@ public class ProfileController {
 
             return ResultDTO.okOf();
         }
+    }
+
+    /**
+     * 查看个人资料
+     *
+     * @param page
+     * @param size
+     * @param id
+     * @param model
+     * @param request
+     * @return
+     */
+    @GetMapping("/people/{id}")
+    public String people(@PathVariable(name = "id") Long id,
+                         @RequestParam(name = "section", defaultValue = "questions") String section,
+                         @RequestParam(name = "page", defaultValue = "1") Integer page,
+                         @RequestParam(name = "size", defaultValue = "10") Integer size,
+                         Model model,
+                         HttpServletRequest request) {
+
+        User user = userService.findUserById(id);
+        //找不到的用户
+        if (user == null) {
+            throw new CustomizeException(CustomizeErrorCode.USER_NOT_FOUND);
+        }
+        //把密码去掉
+        user.setPassword(null);
+        //判断点击的人是否为登录后的自己
+        User currentUser = (User) request.getSession().getAttribute("user");
+        if (currentUser != null && followService.isFollowed(id, currentUser.getId()) != null) {
+            //判断是否关注
+            model.addAttribute("isFollowed", true);
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("userName", user.getName());
+        //获取关注数
+        Integer followCount = followService.countFollowById(id);
+        //获取粉丝数
+        Integer followerCount = followService.countFollowerById(id);
+        model.addAttribute("followCount", followCount);
+        model.addAttribute("followerCount", followerCount);
+//        if (user.equals(currentUser)) {
+//            model.addAttribute("section", "questions");
+//            model.addAttribute("sectionName", "我的提问");
+//
+//            PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
+//            model.addAttribute("pagingDTO", pagingDTO);
+//
+//            return "profile";
+//        }
+        if ("questions".equals(section)) {
+            PagingDTO questions = questionService.list(id, page, size);
+            model.addAttribute("pagingDTO", questions);
+            model.addAttribute("sectionName", "提问");
+        } else if ("follow".equals(section)) {
+            List<FollowDTO> followDTOS = followService.list(id);
+            model.addAttribute("followDTOS", followDTOS);
+            model.addAttribute("sectionName", "关注");
+        } else if ("collection".equals(section)) {
+            model.addAttribute("sectionName", "收藏");
+        } else {
+            throw new CustomizeException(CustomizeErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        return "people";
     }
 
     /**

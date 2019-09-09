@@ -11,9 +11,13 @@ public interface FollowMapper {
     @Select("select * from follow where follower_id = #{followerId}")
     List<Follow> findById(@Param(value = "followerId") Long followerId);
 
-    //通过userId查询对应的粉丝人数
+    //通过userId查询其被多少个人关注，即粉丝数
     @Select("select count(1) from follow where user_id = #{userId}")
     Integer countFollowerById(@Param(value = "userId") Long userId);
+
+    //通过userId查询其关注了多少个人，即关注数
+    @Select("select count(1) from follow where follower_id = #{followerId}")
+    Integer countFollowById(@Param(value = "followerId") Long followerId);
 
     //插入一条关注记录
     @Insert("insert into follow (user_id, follower_id, gmt_create) values (#{userId}, #{followerId}, #{gmtCreate})")
@@ -26,4 +30,6 @@ public interface FollowMapper {
     //查询关注记录是否存在，避免重复关注
     @Select("select * from follow where user_id = #{userId} and follower_id = #{followerId}")
     Follow isFollowed(@Param(value = "userId") Long userId, @Param(value = "followerId") Long followerId);
+
+
 }

@@ -1,5 +1,21 @@
 $(document).ready(function () {
     $("#email").val($.cookie('tEmail'));
+
+    $("#logout").click(function () {
+        $.ajax({
+            type: "POST",
+            url: "/logout",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (response) {
+                if (response.code == 200) {
+                    window.location.reload();
+                } else {
+                    alert("退出登录失败，请稍后再试")
+                }
+            }
+        });
+    });
 });
 
 /**
@@ -110,7 +126,7 @@ function collapseComments(e) {
                     var mediaLeftElement = $("<div/>", {
                         "class": "media-left"
                     }).append($("<a/>", {
-                        "href": "/people?id=" + comment.user.id
+                        "href": "/people/" + comment.user.id
                     }).append($("<img/>", {
                         "class": "media-object img-rounded",
                         "src": comment.user.avatarUrl
@@ -202,7 +218,7 @@ function deleteQuestion(id) {
 /**
  * 邮箱登录
  */
-function login() {
+function loginByEmail() {
     var email = $("#email").val();
     var password = $("#password").val();
 
@@ -532,6 +548,9 @@ function getObjectURL(file) {
     return url ;
 }
 
+/**
+ * 修改头像
+ */
 function changeAvatar() {
     $("#change-avatar-btn").html("上传中...");
     $("#change-avatar-btn").attr("disabled", "disabled");
@@ -552,3 +571,4 @@ function changeAvatar() {
         }
     });
 }
+

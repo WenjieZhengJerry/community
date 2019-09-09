@@ -41,6 +41,9 @@ public class QuestionService {
     @Autowired
     private LikeMapper likeMapper;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer page, Integer size, Long userId, String search, String tag, Integer categoryType) {
         //计算从第几页开始
@@ -281,6 +284,8 @@ public class QuestionService {
             like.setUserId(userId);
             like.setGmtCreate(System.currentTimeMillis());
             likeMapper.like(like);
+            //通知该用户
+//            notificationService.createNotify();
         } else {
             //取消点赞
             questionMapper.dislikeComment(likeDTO.getParentId());

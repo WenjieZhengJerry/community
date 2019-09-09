@@ -7,6 +7,7 @@ import cn.lngfun.community.community.enums.NotificationTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.mapper.NotificationMapper;
+import cn.lngfun.community.community.model.Comment;
 import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
 import org.springframework.beans.BeanUtils;
@@ -22,6 +23,34 @@ public class NotificationService {
 
     @Autowired
     private NotificationMapper notificationMapper;
+
+    /**
+     * 创建通知
+     *
+     * @param comment
+     * @param receiver
+     * @param notifierName
+     * @param outerTitle
+     * @param notificationType
+     * @param outerId
+     */
+    public void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationType, Long outerId) {
+        //对自己的问题操作时不需要通知
+        if (receiver.equals(comment.getCommentator())) {
+            return;
+        }
+
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setNotifier(comment.getCommentator());
+        notification.setOuterId(outerId);
+        notification.setReceiver(receiver);
+        notification.setType(notificationType.getType());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setNotifierName(notifierName);
+        notification.setOuterTitle(outerTitle);
+        notificationMapper.insert(notification);
+    }
 
     /**
      * 列出一页通知
@@ -96,7 +125,10 @@ public class NotificationService {
         notificationMapper.readAll(receiverId);
     }
 
-
+    /**
+     * 删除全部已读
+     * @param receiverId
+     */
     public void deleteRead(Long receiverId) {
         notificationMapper.deleteRead(receiverId);
     }

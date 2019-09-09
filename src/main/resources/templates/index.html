@@ -50,7 +50,7 @@
             <!--问题列表-->
             <div class="media" th:each="question : ${pagingDTO.data}">
                 <div class="media-left">
-                    <a th:href="@{/people(id=${question.user.id})}">
+                    <a th:href="@{'/people/'+${question.user.id}}">
                         <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
                     </a>
                 </div>
@@ -133,10 +133,10 @@
                 <h4><span class="glyphicon glyphicon-user"></span> 最新用户</h4>
                 <ul class="list-group">
                     <li class="list-group-item new-user-box" th:each="newUser : ${newUsersDTO}">
-                        <a th:href="@{'/people?id=' + ${newUser.user.id}}">
+                        <a th:href="@{'/people/' + ${newUser.user.id}}">
                             <img class="img-rounded new-user-img" th:src="${newUser.user.avatarUrl}">
                         </a>
-                        <a th:href="@{'/people?id=' + ${newUser.user.id}}" th:text="${newUser.user.name}"></a><br>
+                        <a th:href="@{'/people/'+ ${newUser.user.id}}" th:text="${newUser.user.name}"></a><br>
                         <span class="new-user-span">
                             <span th:text="${newUser.questionCount}"></span> 提问 | <span th:text="${newUser.followerCount}"></span> 粉丝
                         </span>
