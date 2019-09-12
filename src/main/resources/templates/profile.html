@@ -58,17 +58,23 @@
             </div>
             <!--最新回复-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'replies'}">
-                <div class="media" th:each="notification : ${pagingDTO.data}">
-                    <div class="media-body">
-                        <p class="media-heading" id="notification">
-                            <a th:href="@{'/people?id='+${notification.notifier}}"
-                               th:text="${notification.notifierName}"></a>
-                            <span th:text="${notification.typeName}"></span>
-                            <a th:href="@{'/notification/'+${notification.id}}"
-                               th:text="${notification.outerTitle}"></a>
-                            <span class="label label-danger" id="unread" th:if="${notification.status == 0}">未读</span>
-                        </p>
-                    </div>
+                <div class="profile-r-div">
+                    <button type="button" class="btn btn-success btn-sm pull-left profile-read-btn" onclick="readAll()">
+                        全部标为已读
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm pull-left profile-read-btn"
+                            onclick="deleteRead()">删除全部已读
+                    </button>
+                </div>
+                <div class="alert alert-info profile-alert-div" role="alert" th:each="notification : ${pagingDTO.data}">
+                    <p class="notification">
+                        <a th:href="@{'/people?id='+${notification.notifier}}"
+                           th:text="${notification.notifierName}"></a>
+                        <span th:text="${notification.typeName}"></span>
+                        <a th:href="@{'/notification/'+${notification.id}}"
+                           th:text="${notification.outerTitle}"></a>
+                        <span class="label label-danger unread" th:if="${notification.status == 0}">未读</span>
+                    </p>
                 </div>
                 <hr>
             </div>
@@ -184,6 +190,36 @@
                     </button>
                 </div>
             </div>
+            <!--我的收藏-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'collection'}">
+                <div class="media" th:each="question : ${pagingDTO.data}">
+                    <div class="media-left">
+                        <a th:href="@{'/people/'+${question.user.id}}">
+                            <img class="media-object" th:src="${question.user.avatarUrl}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a th:href="@{/(categoryType=${question.categoryType})}">
+                            <span class="label" th:style="'background-color:'+${question.categoryColor}"
+                                  th:text="${question.categoryName}"></span>
+                            </a>
+                            <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
+                        </h4>
+                        <br>
+                        <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
+                            <span th:text="${question.viewCount}"></span> 次浏览 • <span
+                                    th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                            <a href="javascript:(0)" class="community-menu pull-right active" th:data-from="profile"
+                               onclick="collectOrUnCollect(this)" th:data-id="${question.id}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                                取消收藏
+                            </a>
+                        </span>
+                    </div>
+                    <hr>
+                </div>
+            </div>
             <!--设置-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${section == 'setting'}">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -250,16 +286,8 @@
             </div>
             <!--翻页导航栏-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
-                 th:if="${section == 'questions' || section == 'replies'}">
-                <div th:if="${section == 'replies'}">
-                    <button type="button" class="btn btn-success btn-sm pull-left profile-read-btn" onclick="readAll()">
-                        全部标为已读
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm pull-left profile-read-btn"
-                            onclick="deleteRead()">删除全部已读
-                    </button>
-                </div>
-                <span class="pull-left page-nav-span" th:if="${section == 'questions'}">
+                 th:if="${section == 'questions' || section == 'replies' || section == 'collection'}">
+                <span class="pull-left page-nav-span">
                     当前第<span th:text="${pagingDTO.currentPage}"></span>页，共<span th:text="${pagingDTO.totalPage}"></span>页，共<span
                         th:text="${pagingDTO.totalCount}"></span>条记录
                 </span>
@@ -297,6 +325,10 @@
         <!--右边Tab-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 profile-right-div">
             <div class="list-group section">
+                <a href="/profile/information"
+                   th:class="${section == 'information'} ? 'active list-group-item' : 'list-group-item'">
+                    <span class="glyphicon glyphicon-user"></span> 我的资料
+                </a>
                 <a href="/profile/questions"
                    th:class="${section == 'questions'} ? 'active list-group-item' : 'list-group-item'">
                     <span class="glyphicon glyphicon-list"></span> 我的提问
@@ -306,13 +338,13 @@
                     <span class="glyphicon glyphicon-bell"></span> 最新回复
                     <span class="badge" th:if="${session.unreadCount != 0}" th:text="${session.unreadCount}"></span>
                 </a>
-                <a href="/profile/information"
-                   th:class="${section == 'information'} ? 'active list-group-item' : 'list-group-item'">
-                    <span class="glyphicon glyphicon-user"></span> 我的资料
-                </a>
                 <a href="/profile/follows"
                    th:class="${section == 'follows'} ? 'active list-group-item' : 'list-group-item'">
                     <span class="glyphicon glyphicon-star"></span> 我的关注
+                </a>
+                <a href="/profile/collection"
+                   th:class="${section == 'collection'} ? 'active list-group-item' : 'list-group-item'">
+                    <span class="glyphicon glyphicon-heart"></span> 我的收藏
                 </a>
                 <a href="/profile/setting"
                    th:class="${section == 'setting'} ? 'active list-group-item' : 'list-group-item'">

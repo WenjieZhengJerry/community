@@ -30,7 +30,7 @@ public class GithubProvider {
             return token;
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("获取access token失败，网络连接异常");
+            log.error("获取access token失败，网络连接异常", e);
             throw new CustomizeException(CustomizeErrorCode.NETWORK_CONNECT_FAIL);
         }
     }
@@ -48,7 +48,7 @@ public class GithubProvider {
             return githubUser;
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("获取用户信息失败，网络连接异常");
+            log.error("获取用户信息失败，网络连接异常", e);
             throw new CustomizeException(CustomizeErrorCode.NETWORK_CONNECT_FAIL);
         }
     }

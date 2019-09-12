@@ -65,11 +65,24 @@
                         编辑
                     </a>
                     <span class="menu">
+                        <!--点赞-->
                         <span th:data-id="${question.id}" th:data-type="question"
                               th:class="${question.liked == true ? 'comment-icon pull-right active' : 'comment-icon pull-right'}"
                               onclick="likeOrDislike(this)">
                             <span class="glyphicon glyphicon-thumbs-up"></span>
+                            点赞
                             <span th:text="${question.likeCount}"></span>
+                        </span>
+                        <!--收藏-->
+                        <span th:data-id="${question.id}" onclick="collectOrUnCollect(this)"
+                              th:class="${question.collected == true ? 'comment-icon pull-right active' : 'comment-icon pull-right'}">
+                            <span class="glyphicon glyphicon-heart"></span>
+                            <span>收藏</span>
+                        </span>
+                        <!--分享-->
+                        <span th:data-id="${question.id}" th:data-type="question" class="comment-icon pull-right">
+                            <span class="glyphicon glyphicon-share-alt"></span>
+                            <span>分享</span>
                         </span>
                     </span>
                 </div>
@@ -151,7 +164,7 @@
         </div>
         <!--右边信息块-->
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-right-box">
                 <h4 class="question-tilte">发起人</h4>
                 <div class="media">
                     <div class="media-left">
@@ -192,10 +205,8 @@
                             th:class="${isFollowed != true ? 'btn btn-primary people-follow-btn' : 'btn btn-danger people-follow-btn'}"
                             th:text="${isFollowed != true ? '关注Ta' : '取消关注'}"></button>
                 </div>
-
             </div>
-            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 index-right-box">
                 <h4>相关问题</h4>
                 <ul class="question-related">
                     <li th:each="related : ${relatedQuestions}">
@@ -204,6 +215,14 @@
                            th:title="${related.title}"></a>
                     </li>
                 </ul>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4><span th:text="${question.collectors.size()}"></span> 人关注</h4>
+                <div class="question-collectors-div" th:each="collector : ${question.collectors}">
+                    <a th:href="@{'/people/'+${collector.id}}" th:title="${collector.name}">
+                        <img class="img-rounded" th:src="${collector.avatarUrl}">
+                    </a>
+                </div>
             </div>
             <!--            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->
             <!--            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">-->

@@ -1,5 +1,6 @@
 package cn.lngfun.community.community.controller;
 
+import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,10 +24,10 @@ public class CustomizeErrorConroller implements ErrorController {
         HttpStatus status = getStatus(request);
 
         if (status.is4xxClientError()) {
-            model.addAttribute("message", "这个网页走丢了，试试其他的吧");
+            model.addAttribute("message", CustomizeErrorCode.RESOURCE_NOT_FOUND.getMessage());
         }
         if (status.is5xxServerError()) {
-            model.addAttribute("message", "服务冒烟了，要不然你稍后再试试！！！");
+            model.addAttribute("message", CustomizeErrorCode.SYS_ERROR.getMessage());
         }
 
         return new ModelAndView("error");

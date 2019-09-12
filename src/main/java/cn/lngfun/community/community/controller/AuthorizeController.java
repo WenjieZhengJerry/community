@@ -45,7 +45,7 @@ public class AuthorizeController {
 
     @Autowired
     private UserService userService;
-    
+
     /**
      * 调用Github登录的API，整个过程调用3个接口，包括获取code、获取access_token、获取user信息
      * 步骤：
@@ -150,13 +150,20 @@ public class AuthorizeController {
      */
     @PostMapping("/logout")
     @ResponseBody
-    public Object logout(HttpServletRequest request, HttpServletResponse response) {
+    public Object logout(HttpServletRequest request, HttpServletResponse response,
+                         @RequestParam(name = "redirect") String redirect) {
         request.getSession().removeAttribute("user");
         request.getSession().removeAttribute("unreadCount");
         Cookie cookie = new Cookie("token", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
 
-        return ResultDTO.okOf();
+        if ("true".equals(redirect)) {
+            //如果退出时的页面是需要登录才能访问的则退出后自动跳转到主页
+            return ResultDTO.errorOf(CustomizeErrorCode.RETURN_TO_INDEX);
+        } else {
+            //否则保持当前页面
+            return ResultDTO.okOf();
+        }
     }
 }

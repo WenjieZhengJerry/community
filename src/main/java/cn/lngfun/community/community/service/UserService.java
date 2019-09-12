@@ -29,7 +29,7 @@ public class UserService {
     private FollowMapper followMapper;
 
     /**
-     * 第三方登录
+     * Github第三方登录
      *
      * @param user
      */

@@ -8,10 +8,8 @@ import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.enums.LikeTypeAndOptionEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
-import cn.lngfun.community.community.mapper.CommentMapper;
-import cn.lngfun.community.community.mapper.LikeMapper;
-import cn.lngfun.community.community.mapper.QuestionMapper;
-import cn.lngfun.community.community.mapper.UserMapper;
+import cn.lngfun.community.community.mapper.*;
+import cn.lngfun.community.community.model.Collection;
 import cn.lngfun.community.community.model.Like;
 import cn.lngfun.community.community.model.Question;
 import cn.lngfun.community.community.model.User;
@@ -42,10 +40,24 @@ public class QuestionService {
     private LikeMapper likeMapper;
 
     @Autowired
+    private CollectionMapper collectionMapper;
+
+    @Autowired
     private NotificationService notificationService;
 
-
-    private List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer page, Integer size, Long userId, String search, String tag, Integer categoryType) {
+    /**
+     * 查找符合条件的问题
+     *
+     * @param pagingDTO
+     * @param page
+     * @param size
+     * @param userId
+     * @param search
+     * @param tag
+     * @param categoryType
+     * @return
+     */
+    public List<QuestionDTO> selectQuestions(PagingDTO<QuestionDTO> pagingDTO, Integer page, Integer size, Long userId, String search, String tag, Integer categoryType) {
         //计算从第几页开始
         Integer offset = pagingDTO.calculateOffset(page, size);
         //获取这一页的所有问题
@@ -57,7 +69,7 @@ public class QuestionService {
             if (StringUtils.isNotBlank(tag)) {
                 //有标签条件
                 questions = questionMapper.listByTag(offset, size, tag);
-            } else if(categoryType != null) {
+            } else if (categoryType != null) {
                 //有分类条件
                 if (categoryType == 0) {
                     questions = userId != null ? questionMapper.listByUserId(userId, offset, size) : questionMapper.list(offset, size);
@@ -71,7 +83,6 @@ public class QuestionService {
         }
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-
         for (Question question : questions) {
             User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
@@ -158,8 +169,8 @@ public class QuestionService {
         questionDTO.setCategoryColor(CategoryCache.getCategoryColor(questionDTO.getCategoryType()));
         User dbUser = userMapper.findById(question.getCreator());
         questionDTO.setUser(dbUser);
-        //判断是否已点赞
         if (user != null) {
+            //判断是否已点赞
             List<Like> likes = likeMapper.findByParentId(question.getId());
             for (Like like : likes) {
                 if (like.getUserId().equals(user.getId())) {
@@ -167,13 +178,25 @@ public class QuestionService {
                     break;
                 }
             }
+            //判断是否收藏了这个问题
+            if (collectionMapper.isCollected(id, user.getId()) != null) {
+                questionDTO.setCollected(true);
+            }
         }
+        //查询收藏了该问题的所有用户
+        List<Collection> collectionList = collectionMapper.findByQuestionId(id);
+        List<User> collectors = new ArrayList<>();
+        for (Collection collection : collectionList) {
+            User u = userMapper.findById(collection.getUserId());
+            collectors.add(u);
+        }
+        questionDTO.setCollectors(collectors);
 
         return questionDTO;
     }
 
     /**
-     * 新建提问
+     * 新建问题
      *
      * @param question
      */
@@ -294,4 +317,6 @@ public class QuestionService {
 
         return ResultDTO.okOf();
     }
+
+
 }

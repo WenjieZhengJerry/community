@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>发布-零分社区</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="/css/community.css"/>
     <link rel="stylesheet" href="/css/editormd.min.css">
@@ -26,7 +26,8 @@
             <form action="/publish" method="post">
                 <input type="hidden" name="id" th:value="${id}">
                 <div class="form-group col-lg-10 col-md-12 col-sm-12 col-xs-12">
-                    <input type="text" class="form-control" id="title" name="title" autocomplete="off" placeholder="问题标题..." th:value="${title}">
+                    <input type="text" class="form-control" id="title" name="title" autocomplete="off"
+                           placeholder="问题标题..." th:value="${title}">
                 </div>
                 <div class="form-group col-lg-2 col-md-12 col-sm-12 col-xs-12">
                     <select name="categoryType" id="categoryType" class="form-control">
@@ -38,7 +39,8 @@
                     </select>
                 </div>
                 <div class="form-group" id="question-editor">
-                    <textarea class="form-control" name="description" id="description" cols="30" rows="10" th:text="${description}" style="display: none"></textarea>
+                    <textarea class="form-control" name="description" id="description" cols="30" rows="10"
+                              th:text="${description}" style="display: none"></textarea>
                 </div>
                 <script type="application/javascript">
                     $(function () {
@@ -63,37 +65,38 @@
 
                     <div id="select-tag" class="publish-tag-table">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" th:each="selectCategory : ${tags}" th:class="${selectCategoryStat.first ? 'active':''}">
+                            <li role="presentation" th:each="selectCategory : ${tags}"
+                                th:class="${selectCategoryStat.first ? 'active':''}">
                                 <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
                                    data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
                             </li>
                         </ul>
                         <div class="tab-content">
                             <div role="tabpanel" class="tab-pane" th:id="${selectCategory.categoryName}"
-                                 th:each="selectCategory : ${tags}" th:class="${selectCategoryStat.first ? 'active tab-pane':'tab-pane'}">
-                                <span>
-                                    <span class="label label-info question-tag" th:each="selectTag: ${selectCategory.tags}">
-                                        <span class="glyphicon glyphicon-tags" onclick="selectTag(this)"
-                                              th:data-tag="${selectTag}"
-                                              th:text="${' '+selectTag}">
-                                        </span>
-                                    </span>
-                                </span>
+                                 th:each="selectCategory : ${tags}"
+                                 th:class="${selectCategoryStat.first ? 'active tab-pane':'tab-pane'}">
+                                <div class="question-tag" th:each="selectTag: ${selectCategory.tags}">
+                                    <a href="javascript:void(0)"><span onclick="selectTag(this)"
+                                          th:data-tag="${selectTag}"
+                                          th:text="${' '+selectTag}">
+                                        </span></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="alert alert-danger" role="alert" style="width: 100%;" th:text="${error}" th:if="${error != null}"></div>
+                <div class="alert alert-danger" role="alert" style="width: 100%;" th:text="${error}"
+                     th:if="${error != null}"></div>
                 <button type="submit" class="btn btn-success btn-publish">发布</button>
             </form>
         </div>
-<!--        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">-->
-<!--            <h3>问题发起指南</h3>-->
-<!--            • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>-->
-<!--            • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>-->
-<!--            • 选择标签: 选择一个或者多个合适的标签，用逗号隔开，每个标签不超过10个字<br>-->
-<!--        </div>-->
+        <!--        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">-->
+        <!--            <h3>问题发起指南</h3>-->
+        <!--            • 问题标题: 请用精简的语言描述您发布的问题，不超过25字 <br>-->
+        <!--            • 问题补充: 详细补充您的问题内容，并确保问题描述清晰直观, 并提供一些相关的资料<br>-->
+        <!--            • 选择标签: 选择一个或者多个合适的标签，用逗号隔开，每个标签不超过10个字<br>-->
+        <!--        </div>-->
     </div>
 </div>
 <div th:insert="login :: login"></div>

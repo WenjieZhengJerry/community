@@ -27,7 +27,7 @@
                     </div>
                     <div class="people-user-detail">
                         <span th:text="${user.bio}"></span>
-                        <span th:if="${user.bio == null}">这个人很懒，什么都没有写~~</span>
+                        <span th:if="${user.bio == null}">这个人很懒，什么都没有写~~</span>&nbsp;&nbsp;
                         <br>
                         位置：<span th:text="${user.location}"></span><span
                             th:if="${user.location == null || user.location == ''}">无</span>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -39,6 +39,8 @@
                                   th:text="${#strings.length(user.blog) <= 24 ? user.blog : #strings.substring(user.blog,0,24) + '...'}"></a>
                         </span>
                         <span class="people-info" th:if="${user.blog == null || user.blog == ''}">博客：无</span>
+                        <br>
+                        <a href="/profile/information" th:if="${session.user != null && user.id == session.user.id}"><span class="glyphicon glyphicon-edit"></span>编辑</a>
                     </div>
                 </div>
                 <div class="people-follow-btn-div">
@@ -54,13 +56,13 @@
             <div class="people-nav-div">
                 <div class="people-nav-left-div">
                     <a th:href="@{'/people/'+${user.id}(section='questions')}" th:class="${sectionName == '提问' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
-                        <span class="glyphicon glyphicon-list"></span>&nbsp;Ta的提问
+                        <span class="glyphicon glyphicon-list"></span>&nbsp;Ta的提问&nbsp;(<span th:text="${questionCount}"></span>)
                     </a>
                     <a th:href="@{'/people/'+${user.id}(section='follow')}" th:class="${sectionName == '关注' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
-                        <span class="glyphicon glyphicon-star"></span>&nbsp;Ta的关注
+                        <span class="glyphicon glyphicon-star"></span>&nbsp;Ta的关注&nbsp;(<span th:text="${followCount}"></span>)
                     </a>
                     <a th:href="@{'/people/'+${user.id}(section='collection')}" th:class="${sectionName == '收藏' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
-                        <span class="glyphicon glyphicon-heart"></span>&nbsp;Ta的收藏
+                        <span class="glyphicon glyphicon-heart"></span>&nbsp;Ta的收藏&nbsp;(<span th:text="${collectionCount}"></span>)
                     </a>
                 </div>
                 <div class="people-nav-right-div">
@@ -70,12 +72,12 @@
                     </div>
                     <div class="people-nav-right-box">
                         <p class="people-box-title">粉丝数</p>
-                        <p class="people-box-title-data" th:text="${followerCount}"></p>
+                        <p class="people-box-title-data" th:text="${followerCount}" id="follower-count"></p>
                     </div>
-                    <div class="people-nav-right-box">
-                        <p class="people-box-title">访客</p>
-                        <p class="people-box-title-data">123</p>
-                    </div>
+<!--                    <div class="people-nav-right-box">-->
+<!--                        <p class="people-box-title">访客</p>-->
+<!--                        <p class="people-box-title-data">123</p>-->
+<!--                    </div>-->
                 </div>
             </div>
         </div>
@@ -106,6 +108,7 @@
         </div>
         <!--关注-->
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '关注'}">
+            <h3 th:if="${followDTOS.size() == 0}" style="margin-top: 0; margin-bottom: 50px;">空空如也~</h3>
             <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 follow-box-div" th:each="follow : ${followDTOS}">
                 <a th:href="@{'/people/'+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}"
                                                                      class="img-circle follow-img"></a>
@@ -113,42 +116,58 @@
                 <hr>
                 <span><span th:text="${follow.questionCount}" class="follow-span"></span> 提问</span>&nbsp;&nbsp;
                 <span><span th:text="${follow.followerCount}" class="follow-span"></span> 粉丝</span>
-<!--                <button type="button" class="btn btn-danger people-follow-btn"-->
-<!--                        th:id="${'follow-btn-' + follow.user.id}"-->
-<!--                        onclick="follow(this)" th:data-id="${follow.user.id}">取消关注-->
-<!--                </button>-->
             </div>
         </div>
         <!--收藏-->
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '收藏'}">
-            <h3>待开发</h3>
+            <h3 th:if="${pagingDTO.data.size() == 0}" style="margin-top: 0; margin-bottom: 50px;">空空如也~</h3>
+            <div class="media" th:each="question : ${pagingDTO.data}">
+                <div class="media-left">
+                    <img class="media-object" th:src="${question.user.avatarUrl}">
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">
+                        <a th:href="@{/(categoryType=${question.categoryType})}">
+                            <span class="label" th:style="'background-color:'+${question.categoryColor}"
+                                  th:text="${question.categoryName}"></span>
+                        </a>
+                        <a th:text="${question.title}" th:href="@{'/question/'+${question.id}}"></a>
+                    </h4>
+                    <br>
+                    <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
+                            <span th:text="${question.viewCount}"></span> 次浏览 • 发布时间：<span
+                                th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
+                        </span>
+                </div>
+                <hr>
+            </div>
         </div>
         <!--翻页导航栏-->
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-page-nav" th:if="${sectionName == '提问'}">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-page-nav" th:if="${sectionName == '提问' || sectionName == '收藏'}">
             <nav aria-label="Page navigation" style="float: right;" th:if="${pagingDTO.currentPage != 0}">
                 <ul class="pagination">
                     <li th:if="${pagingDTO.showFirstPage}">
-                        <a th:href="@{'/people/'+${user.id}(page=${1})}" aria-label="Previous">
+                        <a th:href="@{'/people/'+${user.id}(page=${1},section=${section}})}" aria-label="Previous">
                             <span aria-hidden="true">&lt;&lt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showPrevious}">
-                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage - 1})}"
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage - 1},section=${section})}"
                            aria-label="Previous">
                             <span aria-hidden="true">&lt;</span>
                         </a>
                     </li>
                     <li th:each="page : ${pagingDTO.pages}"
                         th:class="${pagingDTO.currentPage == page} ? 'active' : ''">
-                        <a th:text="${page}" th:href="@{'/people/'+${user.id}(page=${page})}"></a>
+                        <a th:text="${page}" th:href="@{'/people/'+${user.id}(page=${page},section=${section})}"></a>
                     </li>
                     <li th:if="${pagingDTO.showNext}">
-                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage + 1})}" aria-label="Next">
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.currentPage + 1},section=${section})}" aria-label="Next">
                             <span aria-hidden="true">&gt;</span>
                         </a>
                     </li>
                     <li th:if="${pagingDTO.showEndPage}">
-                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.totalPage})}" aria-label="Next">
+                        <a th:href="@{'/people/'+${user.id}(page=${pagingDTO.totalPage},section=${section})}" aria-label="Next">
                             <span aria-hidden="true">&gt;&gt;</span>
                         </a>
                     </li>

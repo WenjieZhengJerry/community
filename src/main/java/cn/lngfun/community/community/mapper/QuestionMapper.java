@@ -90,4 +90,12 @@ public interface QuestionMapper {
     //通过分类列出一页问题
     @Select("select * from question where category_type = #{categoryType} order by gmt_modified DESC limit #{offset},#{size}")
     List<Question> listByCategory(@Param(value = "offset") Integer offset, @Param(value = "size") Integer size, @Param(value = "categoryType") Integer categoryType);
+
+    //增加问题收藏量
+    @Update("update question set collection_count = collection_count + 1 where id = #{id}")
+    void incCollection(@Param(value = "id") Long id);
+
+    //减少问题收藏量
+    @Update("update question set collection_count = collection_count - 1 where id = #{id}")
+    void decCollection(@Param(value = "id") Long id);
 }

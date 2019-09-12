@@ -2,14 +2,20 @@ $(document).ready(function () {
     $("#email").val($.cookie('tEmail'));
 
     $("#logout").click(function () {
+        var url = window.location.href;
+        var str = "profile";
+        var redirect = url.indexOf(str) >= 0 ? true : false;
+
         $.ajax({
             type: "POST",
-            url: "/logout",
+            url: "/logout?redirect=" + redirect,
             contentType: "application/json",
             dataType: "json",
             success: function (response) {
                 if (response.code == 200) {
                     window.location.reload();
+                } else if (response.code == 2029) {
+                    window.location.href = "/";
                 } else {
                     alert("退出登录失败，请稍后再试")
                 }
@@ -308,6 +314,8 @@ function likeOrDislike(e) {
     }
 }
 
+
+
 /**
  * 编辑个人资料
  * @param action
@@ -463,11 +471,54 @@ function follow(e) {
                 if (type == "follow") {
                     $("#follow-btn-" + userId).attr("class", "btn btn-danger people-follow-btn");
                     $("#follow-btn-" + userId).html("取消关注");
+                    $("#follower-count").html(Number($("#follower-count").html()) + 1);
                 } else {
                     $("#follow-btn-" + userId).attr("class", "btn btn-primary people-follow-btn");
                     $("#follow-btn-" + userId).html("关注Ta");
+                    $("#follower-count").html($("#follower-count").html() - 1);
                 }
             } else {
+                alert(response.message);
+            }
+        }
+    });
+}
+
+/**
+ * 收藏、取消收藏
+ * @param e
+ */
+function collectOrUnCollect(e) {
+    var questionId = e.getAttribute("data-id");
+    var className = e.getAttribute("class");
+    var from = e.getAttribute("data-from");
+    var type = className.indexOf("active") >= 0 ? "uncollect" : "collect";
+
+    if (type == "collect") {
+        e.classList.add("active");
+    } else {
+        e.classList.remove("active");
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/collectQuestion?id=" + questionId + "&type=" + type,
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200) {
+                //收藏成功
+            } else if (response.code == 2000) {
+                //取消收藏成功
+                if (from == "profile") {
+                    window.location.reload();
+                }
+            } else {
+                //操作失败
+                if (type == "collect") {
+                    e.classList.remove("active");
+                } else {
+                    e.classList.add("active");
+                }
                 alert(response.message);
             }
         }
@@ -501,7 +552,7 @@ function readAll() {
  * 删除全部已读
  */
 function deleteRead() {
-    if ($("#notification").length - $("#unread").length == 0) {
+    if ($(".notification").length - $(".unread").length == 0) {
         alert("没有已读通知哦");
         return;
     } else {
@@ -526,8 +577,8 @@ function deleteRead() {
  */
 function changepic(obj) {
     //console.log(obj.files[0]);//这里可以获取上传文件的name
-    var newsrc=getObjectURL(obj.files[0]);
-    document.getElementById('show').src=newsrc;
+    var newsrc = getObjectURL(obj.files[0]);
+    document.getElementById('show').src = newsrc;
 }
 
 /**
@@ -536,16 +587,16 @@ function changepic(obj) {
  * @returns {*}
  */
 function getObjectURL(file) {
-    var url = null ;
+    var url = null;
     // 下面函数执行的效果是一样的，只是需要针对不同的浏览器执行不同的 js 函数而已
-    if (window.createObjectURL!=undefined) { // basic
-        url = window.createObjectURL(file) ;
-    } else if (window.URL!=undefined) { // mozilla(firefox)
-        url = window.URL.createObjectURL(file) ;
-    } else if (window.webkitURL!=undefined) { // webkit or chrome
-        url = window.webkitURL.createObjectURL(file) ;
+    if (window.createObjectURL != undefined) { // basic
+        url = window.createObjectURL(file);
+    } else if (window.URL != undefined) { // mozilla(firefox)
+        url = window.URL.createObjectURL(file);
+    } else if (window.webkitURL != undefined) { // webkit or chrome
+        url = window.webkitURL.createObjectURL(file);
     }
-    return url ;
+    return url;
 }
 
 /**

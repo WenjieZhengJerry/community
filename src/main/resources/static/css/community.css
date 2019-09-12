@@ -37,6 +37,10 @@ a:active {
     padding-top: 50px;
 }
 
+.index-right-box {
+    border-bottom: 1px solid #eee;
+}
+
 .category {
     margin-top: 25px;
     margin-bottom: 20px;
@@ -123,9 +127,16 @@ a:active {
     padding-right: 30px;
 }
 
+.profile-r-div {
+    margin-bottom: 40px;
+}
+
 .profile-read-btn {
-    margin-top: 23px;
     margin-right: 15px;
+}
+
+.profile-alert-div {
+    margin-bottom: 10px;
 }
 
 .profile-avatar-input {
@@ -174,7 +185,7 @@ a:active {
 }
 
 .menu .comment-icon {
-    margin-right: 10px;
+    margin-right: 15px;
     font-size: 15px;
     cursor: pointer;
 }
@@ -198,9 +209,14 @@ a:active {
 }
 
 .question-tag {
-    margin-right: 5px;
-    cursor: pointer;
-    white-space: normal;
+    display: inline-block;
+    line-height: 28px;
+    padding: 0 8px;
+    white-space: nowrap;
+    background: #cbdbfb;
+    color: #265899;
+    font-size: 14px;
+    margin: 10px 8px 4px 5px;
 }
 
 .question-related {
@@ -209,6 +225,21 @@ a:active {
     line-height: 25px;
     font-size: 13px;
 }
+
+.question-collectors-div {
+    width: 30px;
+    height: 30px;
+    float: left;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+.question-collectors-div img {
+    width: 100%;
+}
+
+
+
 
 .hotIssue-comment-count {
     color: #999;
@@ -310,6 +341,7 @@ a:active {
 .people-follow-btn {
     width: 100%;
     margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .people-middle-div {

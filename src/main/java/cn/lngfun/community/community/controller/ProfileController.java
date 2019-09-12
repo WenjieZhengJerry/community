@@ -8,10 +8,7 @@ import cn.lngfun.community.community.exception.CustomizeException;
 import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.EmailProvider;
-import cn.lngfun.community.community.service.FollowService;
-import cn.lngfun.community.community.service.NotificationService;
-import cn.lngfun.community.community.service.QuestionService;
-import cn.lngfun.community.community.service.UserService;
+import cn.lngfun.community.community.service.*;
 import com.sun.org.apache.xpath.internal.objects.XNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -43,6 +40,9 @@ public class ProfileController {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private CollectionService collectionService;
 
     /**
      * 跳转到个人空间
@@ -86,6 +86,12 @@ public class ProfileController {
 
             List<FollowDTO> follows = followService.list(user.getId());
             model.addAttribute("follows", follows);
+        } else if ("collection".equals(action)) {
+            model.addAttribute("section", "collection");
+            model.addAttribute("sectionName", "我的收藏");
+
+            PagingDTO pagingDTO = collectionService.list(user.getId(), page, size);
+            model.addAttribute("pagingDTO", pagingDTO);
         } else if ("setting".equals(action)) {
             model.addAttribute("section", "setting");
             model.addAttribute("sectionName", "设置");
@@ -237,27 +243,32 @@ public class ProfileController {
         Integer followCount = followService.countFollowById(id);
         //获取粉丝数
         Integer followerCount = followService.countFollowerById(id);
+        //获取收藏数
+        Integer collectionCount = collectionService.countByUserId(id);
+        //获取问题数
+        Integer questionCount = 0;
+        PagingDTO questions = questionService.list(id, page, size);
+        questionCount = questions.getData().size();
+
         model.addAttribute("followCount", followCount);
         model.addAttribute("followerCount", followerCount);
-//        if (user.equals(currentUser)) {
-//            model.addAttribute("section", "questions");
-//            model.addAttribute("sectionName", "我的提问");
-//
-//            PagingDTO pagingDTO = questionService.list(user.getId(), page, size);
-//            model.addAttribute("pagingDTO", pagingDTO);
-//
-//            return "profile";
-//        }
+        model.addAttribute("questionCount", questionCount);
+        model.addAttribute("collectionCount", collectionCount);
+
         if ("questions".equals(section)) {
-            PagingDTO questions = questionService.list(id, page, size);
             model.addAttribute("pagingDTO", questions);
             model.addAttribute("sectionName", "提问");
+            model.addAttribute("section", section);
         } else if ("follow".equals(section)) {
             List<FollowDTO> followDTOS = followService.list(id);
             model.addAttribute("followDTOS", followDTOS);
             model.addAttribute("sectionName", "关注");
+            model.addAttribute("section", section);
         } else if ("collection".equals(section)) {
+            PagingDTO pagingDTO = collectionService.list(id, page, size);
+            model.addAttribute("pagingDTO", pagingDTO);
             model.addAttribute("sectionName", "收藏");
+            model.addAttribute("section", section);
         } else {
             throw new CustomizeException(CustomizeErrorCode.RESOURCE_NOT_FOUND);
         }

@@ -7,6 +7,7 @@ import cn.lngfun.community.community.enums.CommentTypeEnum;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.interceptor.SessionInterceptor;
 import cn.lngfun.community.community.model.User;
+import cn.lngfun.community.community.service.CollectionService;
 import cn.lngfun.community.community.service.CommentService;
 import cn.lngfun.community.community.service.FollowService;
 import cn.lngfun.community.community.service.QuestionService;
@@ -30,8 +31,12 @@ public class QuestionController {
     @Autowired
     private FollowService followService;
 
+    @Autowired
+    private CollectionService collectionService;
+
     /**
      * 获取ip地址
+     *
      * @param request
      * @return
      */
@@ -75,10 +80,11 @@ public class QuestionController {
             questionService.incView(id);
             request.getSession().setAttribute("question-" + id + "-isViewed", ip);
         }
-        //判断是否关注了问题发布者
+        //如果用户已登录，判断现在登录的用户是否关注了问题发布者
         if (currentUser != null && followService.isFollowed(questionDTO.getCreator(), currentUser.getId()) != null) {
             model.addAttribute("isFollowed", true);
         }
+
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", comments);
         model.addAttribute("relatedQuestions", relatedQuestions);

@@ -3,7 +3,7 @@ package cn.lngfun.community.community.controller;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.model.User;
-import cn.lngfun.community.community.service.FollowService;
+import cn.lngfun.community.community.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,39 +13,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class FollowController {
+public class CollectionController {
     @Autowired
-    private FollowService followService;
+    private CollectionService collectionService;
 
     /**
-     * 关注和取消关注
+     * 通过id收藏问题
      *
-     * @param userId
-     * @param type
+     * @param questionId
      * @param request
      * @return
      */
-    @PostMapping("/follow")
+    @PostMapping("/collectQuestion")
     @ResponseBody
-    public Object follow(@RequestParam(name = "id") Long userId,
-                         @RequestParam(name = "type") String type,
-                         HttpServletRequest request) {
-        //判断登录状态
+    public Object collectQuestion(@RequestParam(name = "id") Long questionId,
+                                  @RequestParam(name = "type") String type,
+                                  HttpServletRequest request) {
+        //判断是否登录
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
 
-        if ("follow".equals(type)) {
-            //关注
-            if (userId.equals(user.getId())) {
-                //不能关注自己
-                return ResultDTO.errorOf(CustomizeErrorCode.INVALID_FOLLOW);
-            }
-            return followService.follow(userId, user.getId());
-        } else if ("unfollow".equals(type)) {
-            //取消关注
-            return followService.unfollow(userId, user.getId());
+        if ("collect".equals(type)) {
+            //收藏
+            return collectionService.collectQuestion(questionId, user.getId());
+        } else if ("uncollect".equals(type)) {
+            //取消收藏
+            return collectionService.unCollectQuestion(questionId, user.getId());
         } else {
             //错误的路径
             return ResultDTO.errorOf(CustomizeErrorCode.RESOURCE_NOT_FOUND);
