@@ -10,10 +10,22 @@ Target Server Type    : MYSQL
 Target Server Version : 50720
 File Encoding         : 65001
 
-Date: 2019-09-06 14:20:29
+Date: 2019-09-18 11:24:31
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for collection
+-- ----------------------------
+DROP TABLE IF EXISTS `collection`;
+CREATE TABLE `collection` (
+  `id` bigint(19) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint(19) NOT NULL,
+  `question_id` bigint(19) NOT NULL,
+  `gmt_create` bigint(19) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for comment
@@ -30,7 +42,7 @@ CREATE TABLE `comment` (
   `content` text,
   `comment_count` int(10) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for follow
@@ -42,7 +54,7 @@ CREATE TABLE `follow` (
   `follower_id` bigint(19) NOT NULL COMMENT '粉丝',
   `gmt_create` bigint(19) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for like
@@ -55,7 +67,7 @@ CREATE TABLE `like` (
   `type` int(10) NOT NULL COMMENT '给问题点赞类型为1，给评论点赞类型为2',
   `gmt_create` bigint(19) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for notification
@@ -72,7 +84,7 @@ CREATE TABLE `notification` (
   `notifier_name` varchar(100) DEFAULT NULL,
   `outer_title` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for question
@@ -88,10 +100,11 @@ CREATE TABLE `question` (
   `comment_count` int(10) DEFAULT '0',
   `view_count` int(10) DEFAULT '0',
   `like_count` int(10) DEFAULT '0',
+  `collection_count` int(10) DEFAULT '0',
   `tag` varchar(256) DEFAULT NULL,
   `category_type` int(10) DEFAULT NULL COMMENT '分类',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
@@ -105,11 +118,11 @@ CREATE TABLE `user` (
   `gmt_create` bigint(19) NOT NULL,
   `gmt_modified` bigint(19) NOT NULL,
   `bio` varchar(256) DEFAULT NULL,
-  `avatar_url` varchar(100) DEFAULT NULL,
+  `avatar_url` varchar(256) DEFAULT NULL,
   `email` varchar(25) DEFAULT NULL,
   `password` varchar(36) DEFAULT NULL,
   `company` varchar(255) DEFAULT NULL,
   `blog` varchar(255) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
