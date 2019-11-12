@@ -8,4 +8,5 @@ public class FollowDTO {
     private Integer questionCount;
     private Integer followerCount;
     private User user;
+    private Long gmtCreate;
 }

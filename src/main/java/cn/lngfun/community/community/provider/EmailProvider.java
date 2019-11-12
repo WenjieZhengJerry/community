@@ -62,9 +62,9 @@ public class EmailProvider {
             //设置收件人可以是多个：simpleEmail.addTo("xxx@qq.com", "xxx@163.com");
             simpleEmail.addTo(receiver);
             //设置主题
-            simpleEmail.setSubject("零分社区-验证码");
+            simpleEmail.setSubject("开发者社区-验证码");
             //设置邮件内容
-            simpleEmail.setMsg("欢迎使用零分社区，您的验证码是：" + authCode + "，该验证码10分钟内有效，过期请重新获取");
+            simpleEmail.setMsg("欢迎使用开发者社区，您的验证码是：" + authCode + "，该验证码10分钟内有效，过期请重新获取");
             //发送邮件
             simpleEmail.send();
         } catch (Exception e) {

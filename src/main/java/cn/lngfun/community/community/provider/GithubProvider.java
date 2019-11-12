@@ -1,6 +1,6 @@
 package cn.lngfun.community.community.provider;
 
-import cn.lngfun.community.community.dto.AccessTokenDTO;
+import cn.lngfun.community.community.dto.GithubAccessTokenDTO;
 import cn.lngfun.community.community.dto.GithubUser;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
@@ -9,17 +9,20 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
 @Slf4j
 public class GithubProvider {
 
-    public String getAccessToken(AccessTokenDTO accessTokenDTO) {
+    /**
+     * 获取access token
+     * @param githubAccessTokenDTO
+     * @return
+     */
+    public String getAccessToken(GithubAccessTokenDTO githubAccessTokenDTO) {
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
         OkHttpClient client = new OkHttpClient();
 
-        RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(accessTokenDTO));
+        RequestBody body = RequestBody.create(mediaType, JSON.toJSONString(githubAccessTokenDTO));
         Request request = new Request.Builder()
                 .url("https://github.com/login/oauth/access_token")
                 .post(body)
@@ -35,6 +38,11 @@ public class GithubProvider {
         }
     }
 
+    /**
+     * 获取用户信息
+     * @param accessToken
+     * @return
+     */
     public GithubUser getUser(String accessToken) {
         OkHttpClient client = new OkHttpClient();
 

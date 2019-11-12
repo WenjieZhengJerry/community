@@ -476,6 +476,16 @@ a:active {
     color: #337ab7;
 }
 
+.follower-img {
+    width: 5%;
+}
+
+.follower-span {
+    color: #ccc;
+    font-size: 12px;
+    line-height: 35px;
+}
+
 .nav-div {
     padding-left: 200px;
     padding-right: 190px;

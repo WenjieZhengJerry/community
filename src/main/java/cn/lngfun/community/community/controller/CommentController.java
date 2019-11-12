@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/comment")
 public class CommentController {
 
     @Autowired
@@ -28,7 +29,7 @@ public class CommentController {
      * @param request
      * @return
      */
-    @PostMapping("/comment")
+    @PostMapping
     @ResponseBody
     public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request) {
@@ -60,16 +61,16 @@ public class CommentController {
      * @param id
      * @return
      */
-    @GetMapping("/comment/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     public ResultDTO<List> comments (@PathVariable(name = "id") Long id) {
         List<CommentDTO> commentDTOList = commentService.listByTargetId(id, CommentTypeEnum.COMMENT, null);
         return ResultDTO.okOf(commentDTOList);
     }
 
-    @PostMapping("/comment/deleteComment")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public Object deleteComment(@RequestParam(name = "id") Long id, HttpServletRequest request) {
+    public Object deleteComment(@PathVariable(name = "id") Long id, HttpServletRequest request) {
         //判断是否登录
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {

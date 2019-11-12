@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${question.title + '-零分社区'}"></title>
+    <title th:text="${question.title + '-开发者社区'}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -80,10 +80,10 @@
                             <span>收藏</span>
                         </span>
                         <!--分享-->
-                        <span th:data-id="${question.id}" th:data-type="question" class="comment-icon pull-right">
-                            <span class="glyphicon glyphicon-share-alt"></span>
-                            <span>分享</span>
-                        </span>
+<!--                        <span th:data-id="${question.id}" th:data-type="question" class="comment-icon pull-right">-->
+<!--                            <span class="glyphicon glyphicon-share-alt"></span>-->
+<!--                            <span>分享</span>-->
+<!--                        </span>-->
                     </span>
                 </div>
                 <!--回复输入框-->
@@ -92,7 +92,7 @@
                     <hr class="comment-sp">
                     <div class="media">
                         <div class="media-left">
-                            <a href="#">
+                            <a href="javascript:void(0)">
                                 <img class="media-object img-rounded"
                                      th:src="${session.user != null ? session.user.avatarUrl : '/images/upload/default-icon.png'}">
                             </a>

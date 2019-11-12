@@ -11,14 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/publish")
 public class PublishController {
 
     @Autowired
@@ -32,7 +30,7 @@ public class PublishController {
      * @param request
      * @return
      */
-    @GetMapping("/publish/{id}")
+    @GetMapping("/{id}")
     public String edit(@PathVariable(name = "id") Long id, Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         //判断登录状态
@@ -63,7 +61,7 @@ public class PublishController {
      * @param request
      * @return
      */
-    @GetMapping("/publish")
+    @GetMapping
     public String publish(Model model, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
         //判断登录状态
@@ -85,7 +83,7 @@ public class PublishController {
      * @param model
      * @return
      */
-    @PostMapping("/publish")
+    @PostMapping
     public String doPublish(@RequestParam(value = "title", required = false) String title,
                             @RequestParam(value = "description", required = false) String description,
                             @RequestParam(value = "tag", required = false) String tag,

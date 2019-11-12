@@ -8,14 +8,12 @@ import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/notification")
 public class NotificationController {
     @Autowired
     private NotificationService notificationService;
@@ -27,7 +25,7 @@ public class NotificationController {
      * @param request
      * @return
      */
-    @GetMapping("/notification/{id}")
+    @GetMapping("/{id}")
     public String redirect(@PathVariable(name = "id") Long id,
                            HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -51,7 +49,7 @@ public class NotificationController {
      * @param request
      * @return
      */
-    @PostMapping("/notification/readAll")
+    @PostMapping
     @ResponseBody
     public Object readAll(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");
@@ -63,7 +61,13 @@ public class NotificationController {
         return ResultDTO.okOf();
     }
 
-    @PostMapping("/notification/deleteRead")
+    /**
+     * 删除全部已读
+     *
+     * @param request
+     * @return
+     */
+    @DeleteMapping
     @ResponseBody
     public Object deleteRead(HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("user");

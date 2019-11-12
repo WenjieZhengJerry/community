@@ -8,8 +8,12 @@ import java.util.List;
 @Mapper
 public interface FollowMapper {
     //通过userId查询对应的关注列表
-    @Select("select * from follow where follower_id = #{followerId}")
-    List<Follow> findById(@Param(value = "followerId") Long followerId);
+    @Select("select * from follow where follower_id = #{userId} order by gmt_create DESC")
+    List<Follow> findById(@Param(value = "userId") Long userId);
+
+    //通过userId查询对应的粉丝列表
+    @Select("select * from follow where user_id = #{userId} order by gmt_create DESC")
+    List<Follow> findFollowersById(@Param(value = "userId") Long userId);
 
     //通过userId查询其被多少个人关注，即粉丝数
     @Select("select count(1) from follow where user_id = #{userId}")

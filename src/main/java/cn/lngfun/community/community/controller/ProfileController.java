@@ -5,11 +5,9 @@ import cn.lngfun.community.community.dto.PagingDTO;
 import cn.lngfun.community.community.dto.ResultDTO;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
 import cn.lngfun.community.community.exception.CustomizeException;
-import cn.lngfun.community.community.model.Notification;
 import cn.lngfun.community.community.model.User;
-import cn.lngfun.community.community.provider.EmailProvider;
+import cn.lngfun.community.community.provider.Tools;
 import cn.lngfun.community.community.service.*;
-import com.sun.org.apache.xpath.internal.objects.XNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 
 @Controller
 public class ProfileController {
@@ -148,9 +142,10 @@ public class ProfileController {
      * @param request
      * @return
      */
-    @PostMapping("/getAuthCode")
+    @PostMapping("/getAuthCode/{type}")
     @ResponseBody
-    public Object getAuthCode(@RequestParam(name = "email") String email,
+    public Object getAuthCode(@PathVariable(name = "type") String type,
+                              @RequestParam(name = "email") String email,
                               HttpServletRequest request) {
         //前端校验
         if (!email.matches("^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$") || email == null || "".equals(email)) {
@@ -160,19 +155,15 @@ public class ProfileController {
         if (userService.hasEmail(email) != null) {
             return ResultDTO.errorOf(CustomizeErrorCode.EMAIL_IS_EXIST);
         }
-        //判断登录状态
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+        if ("bindEmail".equals(type)) {
+            //如果是绑定邮箱或修改邮箱则判断登录状态
+            User user = (User) request.getSession().getAttribute("user");
+            if (user == null) {
+                return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+            }
         }
-        //获取随机6位数的验证码
-        String authCode = UUID.randomUUID().toString().substring(0, 6);
-        //保存验证码到session中
-        request.getSession().setAttribute("authCode", authCode);
-        //10分钟后移除session中的验证码
-        this.removeAttrbute(request.getSession(), "authCode", 10);
-        //发送验证码到指定邮箱并返回结果
-        return EmailProvider.getAuthCode(email, authCode);
+
+        return Tools.getAuthCode(email, request);
     }
 
     /**
@@ -199,15 +190,39 @@ public class ProfileController {
         } else {
             //验证码正确，保存邮箱到数据库
             User user = (User) request.getSession().getAttribute("user");
-            user.setEmail(email);
-            userService.updateProfile(user);
+            if (user == null) {
+                //未登录
+                return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+            } else {
+                //已登录
+                user.setEmail(email);
+                userService.updateProfile(user);
 
-            return ResultDTO.okOf();
+                return ResultDTO.okOf();
+            }
         }
     }
 
     /**
-     * 查看个人资料
+     * 绑定GitHub
+     * @param request
+     * @return
+     */
+//    @GetMapping("/bindGithub")
+//    @ResponseBody
+//    public Object bindGithub (HttpServletRequest request) {
+//        User user = (User) request.getSession().getAttribute("user");
+//        if (user == null) {
+//            //未登录无法绑定
+//            return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
+//        } else {
+//            //已登录可绑定
+//            return userService.bindGithub(user);
+//        }
+//    }
+
+    /**
+     * 查看个人空间
      *
      * @param page
      * @param size
@@ -269,6 +284,11 @@ public class ProfileController {
             model.addAttribute("pagingDTO", pagingDTO);
             model.addAttribute("sectionName", "收藏");
             model.addAttribute("section", section);
+        } else if ("follower".equals(section)) {
+            List<FollowDTO> followers = followService.listFollowers(id);
+            model.addAttribute("followers", followers);
+            model.addAttribute("sectionName", "粉丝");
+            model.addAttribute("section", section);
         } else {
             throw new CustomizeException(CustomizeErrorCode.RESOURCE_NOT_FOUND);
         }
@@ -321,25 +341,6 @@ public class ProfileController {
         userService.updatePassword(user);
 
         return ResultDTO.okOf();
-    }
-
-    /**
-     * 指定时间内移除session的某个元素
-     *
-     * @param session
-     * @param attrName
-     * @param minute
-     */
-    private void removeAttrbute(final HttpSession session, final String attrName, final int minute) {
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // 删除session中存的验证码
-                session.removeAttribute(attrName);
-                timer.cancel();
-            }
-        }, minute * 60 * 1000);
     }
 
 }

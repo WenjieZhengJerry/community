@@ -7,6 +7,7 @@ public class User {
     private Long id;
     private String name;
     private String accountId;
+    private String openid;
     private String token;
     private Long gmtCreate;
     private Long gmtModified;

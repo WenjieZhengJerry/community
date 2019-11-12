@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${sectionName + '-零分社区'}"></title>
+    <title th:text="${sectionName + '-开发者社区'}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -68,12 +68,13 @@
                 </div>
                 <div class="alert alert-info profile-alert-div" role="alert" th:each="notification : ${pagingDTO.data}">
                     <p class="notification">
-                        <a th:href="@{'/people?id='+${notification.notifier}}"
+                        <a th:href="@{'/people/'+${notification.notifier}}"
                            th:text="${notification.notifierName}"></a>
                         <span th:text="${notification.typeName}"></span>
                         <a th:href="@{'/notification/'+${notification.id}}"
                            th:text="${notification.outerTitle}"></a>
                         <span class="label label-danger unread" th:if="${notification.status == 0}">未读</span>
+                        <span class="label label-success" th:if="${notification.status == 1}">已读</span>
                     </p>
                 </div>
                 <hr>
@@ -144,13 +145,14 @@
                         </div>
                     </div>
                 </div>
+                <!-- 更换头像 -->
                 <div class="modal fade" id="changeAvatar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel">更换头像 - 零分社区</h4>
+                                <h4 class="modal-title" id="myModalLabel">更换头像 - 开发者社区</h4>
                             </div>
                             <div class="modal-body">
                                 <form id="change-avatar-form">
@@ -210,7 +212,7 @@
                         <span class="text-description"><span th:text="${question.commentCount}"></span> 个回复 •
                             <span th:text="${question.viewCount}"></span> 次浏览 • <span
                                     th:text="${#dates.format(question.gmtCreate,'yyyy-MM-dd HH:mm')}"></span>
-                            <a href="javascript:(0)" class="community-menu pull-right active" th:data-from="profile"
+                            <a href="javascript:void(0);" class="community-menu pull-right active" th:data-from="profile"
                                onclick="collectOrUnCollect(this)" th:data-id="${question.id}">
                                 <span class="glyphicon glyphicon-trash"></span>
                                 取消收藏

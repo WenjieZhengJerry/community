@@ -1,12 +1,10 @@
 package cn.lngfun.community.community.controller;
 
-import cn.lngfun.community.community.dto.AccessTokenDTO;
-import cn.lngfun.community.community.dto.GithubUser;
-import cn.lngfun.community.community.dto.ResultDTO;
+import cn.lngfun.community.community.dto.*;
 import cn.lngfun.community.community.exception.CustomizeErrorCode;
-import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
 import cn.lngfun.community.community.provider.GithubProvider;
+import cn.lngfun.community.community.provider.QQProvider;
 import cn.lngfun.community.community.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,14 +32,35 @@ public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
 
+    @Autowired
+    private QQProvider qqProvider;
+
+    //github登录所需参数
     @Value("${github.client.id}")
-    private String clientId;
+    private String gClientId;
 
     @Value("${github.client.secret}")
-    private String clientSecret;
+    private String gClientSecret;
 
     @Value("${github.redirect.uri}")
-    private String redirectUri;
+    private String gRedirectUri;
+
+    //QQ登录所需参数
+    @Value("${qq.client.id}")
+    private String qqClientId;
+
+    @Value("${qq.client.secret}")
+    private String qqClientSecret;
+
+    @Value("${qq.redirect.uri}")
+    private String qqRedirectUri;
+
+    @Value("${qq.grant.type}")
+    private String qqGrantType;
+
+    //默认头像
+    @Value("${default.avatarurl}")
+    private String defaultAvatarurl;
 
     @Autowired
     private UserService userService;
@@ -60,19 +79,32 @@ public class AuthorizeController {
      * @return
      */
     @GetMapping("/callback")
-    public String callback(@RequestParam(name = "code") String code,
+    public String callback(@RequestParam(name = "code") String code,//2.调用获取code的接口接收返回的code
                            @RequestParam(name = "state") String state,
+                           HttpServletRequest request,
                            HttpServletResponse response) {
-        AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
-        accessTokenDTO.setClient_id(clientId);
-        accessTokenDTO.setClient_secret(clientSecret);
-        accessTokenDTO.setCode(code);
-        accessTokenDTO.setRedirect_uri(redirectUri);
-        accessTokenDTO.setState(state);
+        GithubAccessTokenDTO githubAccessTokenDTO = new GithubAccessTokenDTO();
+        githubAccessTokenDTO.setClient_id(gClientId);
+        githubAccessTokenDTO.setClient_secret(gClientSecret);
+        githubAccessTokenDTO.setCode(code);
+        githubAccessTokenDTO.setRedirect_uri(gRedirectUri);
+        githubAccessTokenDTO.setState(state);
 
-        String accessToken = githubProvider.getAccessToken(accessTokenDTO);
+        //3.利用接收到的code再调用获取access_token的接口接收access_token
+        String accessToken = githubProvider.getAccessToken(githubAccessTokenDTO);
+        //4.利用接收到的access_token再调用获取user的接口接收user信息
         GithubUser githubUser = githubProvider.getUser(accessToken);
         if (githubUser != null && githubUser.getId() != null) {
+            if ("bind".equals(state)) {
+                //绑定GitHub
+                User user = (User) request.getSession().getAttribute("user");
+                if (user == null) {
+                    return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN).getMessage();
+                } else {
+                    return userService.bindGithub(String.valueOf(githubUser.getId()), user);
+                }
+            }
+
             //登录成功，写入cookie
             User user = new User();
             String token = UUID.randomUUID().toString();
@@ -89,13 +121,82 @@ public class AuthorizeController {
             user.setCompany(githubUser.getCompany());
             user.setBlog(githubUser.getBlog());
             user.setLocation(githubUser.getLocation());
-            userService.createOrUpdate(user);
+            userService.createOrUpdate(user, "GitHub");
 
-            response.addCookie(new Cookie("token", token));
+            Cookie cookie = new Cookie("token", token);
+            cookie.setMaxAge(2592000);//30天有效期
+            response.addCookie(cookie);
             return "redirect:/";
         } else {
             //登录失败，重新登陆
             log.error("GitHub登录失败,{}", githubUser);
+            return "redirect:/";
+        }
+    }
+
+    /**
+     * QQ登录
+     * 1、获取Authorization Code
+     * 2、通过Authorization Code获取Access Token
+     * 3、获取openId
+     * 4、获取登录用户的信息
+     *
+     * @param code
+     * @param response
+     * @return
+     */
+    @GetMapping("/qqCallback")
+    public String qqCallback(@RequestParam(name = "code") String code,//1、获取Authorization Code
+                             @RequestParam(name = "state") String state,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
+        QQAccessTokenDTO qqAccessTokenDTO = new QQAccessTokenDTO();
+        qqAccessTokenDTO.setClient_id(qqClientId);
+        qqAccessTokenDTO.setClient_secret(qqClientSecret);
+        qqAccessTokenDTO.setCode(code);
+        qqAccessTokenDTO.setRedirect_uri(qqRedirectUri);
+        qqAccessTokenDTO.setGrantType(qqGrantType);
+
+        //2、通过Authorization Code获取Access Token
+        String accessToken = qqProvider.getAccessToken(qqAccessTokenDTO);
+        //3、获取openId
+        String openid = qqProvider.getOpenid(accessToken);
+
+        if ("bind".equals(state)) {
+            //绑定QQ
+            User user = (User) request.getSession().getAttribute("user");
+            if (user == null) {
+                return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN).getMessage();
+            } else {
+                return userService.bindQQ(openid, user);
+            }
+        }
+
+        //4、获取登录用户的信息
+        QQUserDTO qqUserDTO = qqProvider.getUser(accessToken, qqClientId, openid);
+
+        if (qqUserDTO != null) {
+            //登录成功，写入cookie
+            User user = new User();
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user.setOpenid(openid);
+            //防止名称为空
+            if (StringUtils.isBlank(qqUserDTO.getNickname())) {
+                qqUserDTO.setNickname("未设置昵称");
+            }
+            user.setName(qqUserDTO.getNickname());
+            user.setAvatarUrl(qqUserDTO.getFigureurlQq());
+            user.setLocation(qqUserDTO.getCity());
+            userService.createOrUpdate(user, "QQ");
+
+            Cookie cookie = new Cookie("token", token);
+            cookie.setMaxAge(2592000);//30天有效期
+            response.addCookie(cookie);
+            return "redirect:/";
+        } else {
+            //登录失败，重新登陆
+            log.error("QQ登录失败");
             return "redirect:/";
         }
     }
@@ -130,7 +231,9 @@ public class AuthorizeController {
         //记住邮箱
         if (remember != null && "1".equals(remember)) {
             //添加到cookie里
-            response.addCookie(new Cookie("tEmail", email));
+            Cookie cookie = new Cookie("tEmail", email);
+            cookie.setMaxAge(2592000);//30天有效期
+            response.addCookie(cookie);
         }
         //md5加密，确定计算方法
         MessageDigest md5 = MessageDigest.getInstance("MD5");
@@ -140,6 +243,59 @@ public class AuthorizeController {
         //登录
         return userService.loginByEmail(email, password, response);
     }
+
+    /**
+     * 邮箱注册
+     *
+     * @param email
+     * @param password
+     * @param authCode
+     * @param request
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    @PostMapping("/register")
+    @ResponseBody
+    public Object register(@RequestParam(name = "email") String email,
+                           @RequestParam(name = "password") String password,
+                           @RequestParam(name = "authCode") String authCode,
+                           HttpServletRequest request) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        //前端校验
+        if (!password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,18}$") || password == null || "".equals(password)) {
+            return ResultDTO.errorOf(CustomizeErrorCode.PASSWORD_FORMAT_WRONG);
+        }
+
+        //获取session里的验证码
+        String sessionAuthCode = String.valueOf(request.getSession().getAttribute("authCode"));
+        if (sessionAuthCode == null) {
+            //验证码过期
+            return ResultDTO.errorOf(CustomizeErrorCode.AUTH_CODE_INVALID);
+        } else if (!sessionAuthCode.toLowerCase().equals(authCode.toLowerCase())) {
+            //验证码错误
+            return ResultDTO.errorOf(CustomizeErrorCode.AUTH_CODE_WRONG);
+        } else {
+            //验证码正确，注册成功,填装数据并录入数据库
+            User user = new User();
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            user.setEmail(email);
+            user.setName("未设置昵称");
+            //md5加密，确定计算方法
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            BASE64Encoder base64en = new BASE64Encoder();
+            //加密密码
+            password = base64en.encode(md5.digest(password.getBytes("utf-8")));
+            user.setPassword(password);
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(defaultAvatarurl);
+            userService.register(user);
+
+            return ResultDTO.okOf();
+        }
+    }
+
 
     /**
      * 退出登录

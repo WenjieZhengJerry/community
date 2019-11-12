@@ -90,8 +90,10 @@ function deleteComment(e) {
     if (confirm("删除评论无法复原，是否删除")) {
         var id = e.getAttribute("data-id");
         $.ajax({
-            type: "post",
-            url: "/comment/deleteComment?id=" + id,
+            // type: "post",
+            // url: "/comment/deleteComment?id=" + id,
+            type: "delete",
+            url: "/comment/" + id,
             dataType: "json",
             success: function (response) {
                 if (response.code == 200) {
@@ -206,8 +208,8 @@ function showSelectTag() {
 function deleteQuestion(id) {
     if (confirm("删除问题无法复原，是否删除？")) {
         $.ajax({
-            type: "POST",
-            url: "/deleteQuestion?id=" + id,
+            type: "delete",
+            url: "/question/" + id,
             contentType: "application/json",
             dataType: "json",
             success: function (response) {
@@ -413,7 +415,7 @@ function settime(obj, countdown) {
 }
 
 /**
- * 发送验证码
+ * 绑定邮箱时获取验证码
  * @param action
  * @param obj
  */
@@ -435,7 +437,7 @@ function sendAuthCode(action, obj) {
 
     $.ajax({
         type: "post",
-        url: "/getAuthCode?email=" + email,
+        url: "/getAuthCode/bindEmail?email=" + email,
         dataType: "json",
         success: function (response) {
             if (response.code == 200) {
@@ -529,13 +531,13 @@ function collectOrUnCollect(e) {
  * 设为全部已读
  */
 function readAll() {
-    if ($("#unread").length == 0) {
+    if ($(".unread").length == 0) {
         alert("没有未读通知哦");
         return;
     } else {
         $.ajax({
             type: "post",
-            url: "/notification/readAll",
+            url: "/notification",
             dataType: "json",
             success: function (response) {
                 if (response.code == 200) {
@@ -557,8 +559,8 @@ function deleteRead() {
         return;
     } else {
         $.ajax({
-            type: "post",
-            url: "/notification/deleteRead",
+            type: "delete",
+            url: "/notification",
             dataType: "json",
             success: function (response) {
                 if (response.code == 200) {

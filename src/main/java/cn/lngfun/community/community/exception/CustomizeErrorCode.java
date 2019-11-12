@@ -31,7 +31,9 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode {
     CHANGE_AVATAR_FAIL(2027, "更改头像失败"),
     RESOURCE_NOT_FOUND(2028, "这个网页走丢了，试试其他的吧"),
     RETURN_TO_INDEX(2029, "返回主页"),
-    COLLECTION_IS_EXIST(2030, "你已经收藏了这个问题了");
+    COLLECTION_IS_EXIST(2030, "你已经收藏了这个问题了"),
+    ACCOUNT_ID_IS_EXIST(2031, "这个GitHub账号已经被别的兄弟绑定了，再选一个吧"),
+    OPENID_IS_EXIST(2032, "这个QQ账号已经被别的兄弟绑定了，再选一个吧");
 
     private String message;
     private Integer code;

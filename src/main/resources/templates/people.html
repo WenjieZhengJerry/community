@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${userName + '-零分社区'}"></title>
+    <title th:text="${userName + '-开发者社区'}"></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css"/>
@@ -58,11 +58,14 @@
                     <a th:href="@{'/people/'+${user.id}(section='questions')}" th:class="${sectionName == '提问' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
                         <span class="glyphicon glyphicon-list"></span>&nbsp;Ta的提问&nbsp;(<span th:text="${questionCount}"></span>)
                     </a>
+                    <a th:href="@{'/people/'+${user.id}(section='collection')}" th:class="${sectionName == '收藏' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
+                        <span class="glyphicon glyphicon-heart"></span>&nbsp;Ta的收藏&nbsp;(<span th:text="${collectionCount}"></span>)
+                    </a>
                     <a th:href="@{'/people/'+${user.id}(section='follow')}" th:class="${sectionName == '关注' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
                         <span class="glyphicon glyphicon-star"></span>&nbsp;Ta的关注&nbsp;(<span th:text="${followCount}"></span>)
                     </a>
-                    <a th:href="@{'/people/'+${user.id}(section='collection')}" th:class="${sectionName == '收藏' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
-                        <span class="glyphicon glyphicon-heart"></span>&nbsp;Ta的收藏&nbsp;(<span th:text="${collectionCount}"></span>)
+                    <a th:href="@{'/people/'+${user.id}(section='follower')}" th:class="${sectionName == '粉丝' ? 'people-nav-left-box active' : 'people-nav-left-box'}">
+                        <span class="glyphicon glyphicon-knight"></span>&nbsp;Ta的粉丝&nbsp;(<span th:text="${followerCount}"></span>)
                     </a>
                 </div>
                 <div class="people-nav-right-div">
@@ -140,6 +143,25 @@
                         </span>
                 </div>
                 <hr>
+            </div>
+        </div>
+        <!--粉丝-->
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 people-content-div" th:if="${sectionName == '粉丝'}">
+            <h3 th:if="${followers.size() == 0}" style="margin-top: 0; margin-bottom: 50px;">空空如也~</h3>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr th:each="follow : ${followers}">
+                            <td>
+                                <a th:href="@{'/people/'+${follow.user.id}}"><img th:src="${follow.user.avatarUrl}" class="img-circle follower-img"></a>&nbsp;&nbsp;
+                                <a th:href="@{'/people/'+${follow.user.id}}"><span th:text="${follow.user.name}"></span></a>
+                            </td>
+                            <td width="200px">
+                                <span class="follower-span pull-right">关注时间：<span th:text="${#dates.format(follow.gmtCreate,'yyyy-MM-dd HH:mm:ss')}"></span></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <!--翻页导航栏-->

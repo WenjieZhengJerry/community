@@ -7,6 +7,8 @@ import cn.lngfun.community.community.mapper.FollowMapper;
 import cn.lngfun.community.community.mapper.QuestionMapper;
 import cn.lngfun.community.community.mapper.UserMapper;
 import cn.lngfun.community.community.model.User;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -29,18 +32,34 @@ public class UserService {
     private FollowMapper followMapper;
 
     /**
-     * Github第三方登录
+     * 注册
      *
      * @param user
      */
-    public void createOrUpdate(User user) {
-        User dbUser = userMapper.findByAccountId(user.getAccountId());
+    public void register(User user) {
+        userMapper.register(user);
+    }
+
+    /**
+     * Github、QQ第三方登录
+     *
+     * @param user
+     */
+    public void createOrUpdate(User user, String type) {
+        User dbUser = new User();
+        if ("GitHub".equals(type))
+            dbUser = userMapper.findByAccountId(user.getAccountId());
+        else if ("QQ".equals(type))
+            dbUser = userMapper.findByOpenid(user.getOpenid());
 
         if (dbUser == null) {
             //插入
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
-            userMapper.insert(user);
+            if ("GitHub".equals(type))
+                userMapper.insertGithub(user);
+            else if ("QQ".equals(type))
+                userMapper.insertQQ(user);
         } else {
             //更新:只有数据库内字段值为空的属性需要更新
             if (StringUtils.isBlank(dbUser.getAvatarUrl())) {
@@ -95,7 +114,13 @@ public class UserService {
                 //token过期
                 return ResultDTO.errorOf(CustomizeErrorCode.TOKEN_INVALID);
             }
-            response.addCookie(new Cookie("token", user.getToken()));
+            //更新token
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
+            userMapper.update(user);
+            Cookie cookie = new Cookie("token", user.getToken());
+            cookie.setMaxAge(2592000);//30天有效期
+            response.addCookie(cookie);
 
             return ResultDTO.okOf();
         }
@@ -139,6 +164,11 @@ public class UserService {
         userMapper.updatePassword(user);
     }
 
+    /**
+     * 获取5个最新注册的用户
+     *
+     * @return
+     */
     public List<FollowDTO> selectNewUser() {
         List<FollowDTO> newUsersDTO = new ArrayList<>();
         int offset = 0;
@@ -157,5 +187,40 @@ public class UserService {
         }
 
         return newUsersDTO;
+    }
+
+    /**
+     * 绑定GitHub
+     * @param accoutId
+     * @param user
+     * @return
+     */
+    public String bindGithub(String accoutId, User user) {
+        if (userMapper.findByAccountId(accoutId) != null) {
+            //account id已存在
+            return ResultDTO.errorOf(CustomizeErrorCode.ACCOUNT_ID_IS_EXIST).getMessage();
+        } else {
+            user.setAccountId(accoutId);
+            userMapper.update(user);
+            return ResultDTO.okOf().getMessage();
+        }
+    }
+
+    /**
+     * 绑定QQ
+     * @param openid
+     * @param user
+     * @return
+     */
+    public String bindQQ(String openid, User user) {
+        if (userMapper.findByOpenid(openid) != null) {
+            //openid已存在
+            return ResultDTO.errorOf(CustomizeErrorCode.OPENID_IS_EXIST).getMessage();
+        } else {
+            user.setOpenid(openid);
+            userMapper.update(user);
+            return ResultDTO.okOf().getMessage();
+        }
+
     }
 }
