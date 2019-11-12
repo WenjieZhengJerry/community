@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 云数据库RDS
-Source Server Version : 50720
-Source Host           : rm-wz9yeq4nmj6100210eo.mysql.rds.aliyuncs.com:3306
+Source Server         : lngfun
+Source Server Version : 50727
+Source Host           : 129.204.15.163:3306
 Source Database       : community
 
 Target Server Type    : MYSQL
-Target Server Version : 50720
+Target Server Version : 50727
 File Encoding         : 65001
 
-Date: 2019-09-18 11:24:31
+Date: 2019-11-12 16:11:34
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -25,7 +25,7 @@ CREATE TABLE `collection` (
   `question_id` bigint(19) NOT NULL,
   `gmt_create` bigint(19) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for comment
@@ -42,7 +42,7 @@ CREATE TABLE `comment` (
   `content` text,
   `comment_count` int(10) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for follow
@@ -54,7 +54,7 @@ CREATE TABLE `follow` (
   `follower_id` bigint(19) NOT NULL COMMENT '粉丝',
   `gmt_create` bigint(19) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=60 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for like
@@ -67,7 +67,7 @@ CREATE TABLE `like` (
   `type` int(10) NOT NULL COMMENT '给问题点赞类型为1，给评论点赞类型为2',
   `gmt_create` bigint(19) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for notification
@@ -84,7 +84,7 @@ CREATE TABLE `notification` (
   `notifier_name` varchar(100) DEFAULT NULL,
   `outer_title` varchar(256) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for question
@@ -104,7 +104,7 @@ CREATE TABLE `question` (
   `tag` varchar(256) DEFAULT NULL,
   `category_type` int(10) DEFAULT NULL COMMENT '分类',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for user
@@ -112,7 +112,8 @@ CREATE TABLE `question` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint(19) unsigned NOT NULL AUTO_INCREMENT,
-  `account_id` varchar(100) NOT NULL,
+  `openid` char(32) DEFAULT NULL,
+  `account_id` varchar(100) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `token` char(36) NOT NULL,
   `gmt_create` bigint(19) NOT NULL,
@@ -125,4 +126,4 @@ CREATE TABLE `user` (
   `blog` varchar(255) DEFAULT NULL,
   `location` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
